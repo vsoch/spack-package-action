@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Spack Package
-        uses: ./package@main
+        uses: ./package
         with:
           package: zlib
           release: ${{ github.event_name != 'pull_request' }}
