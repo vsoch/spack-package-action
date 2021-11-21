@@ -1,0 +1,61 @@
+name: "Spack Binary Release Action"
+description: "Build and release a package.py in a source repository with spack."
+inputs:
+  package:
+    description: the name of the package to install
+    required: true
+  package_path:
+    description: the path to the package.py (e.g., spack/package.py). If not provided, default spack used.
+    required: false
+  repos:
+    description: comma separated list of additional repos to clone and add
+    required: false
+  branch:
+    description: The branch of spack to use (defaults to develop)
+    required: false
+    default: develop
+  release:
+    description: A spack release to use (if defined, overrides branch)
+    required: false
+  token:
+    description: A GitHub token required if releasing artifacts to the same repository
+    required: true
+  flags:
+    description: Extra flags (compiler, target, variants, etc) to add to the install command
+    required: false
+  release:
+    description: Release package to GitHub repository (token is required)
+    required: true
+    default: false
+
+outputs:
+  filename:
+    description: "Output file generated"
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Install Spack and Dependencies
+      env:
+        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_RELEASE: ${{ inputs.release }}
+        INPUT_REPOS: ${{ inputs.repos }}
+      run: ${{ github.action_path }}/scripts/setup.sh
+      shell: bash
+
+    - name: Build Package
+      id: build
+      env:
+        INPUT_PACKAGE_NAME: ${{ inputs.package }}
+        INPUT_PACKAGE_PATH: ${{ inputs.package_path }}
+        INPUT_FLAGS: ${{ inputs.flags }}
+        # ACTION_DIR: ${{ github.action_path }}
+      run: ${{ github.action_path }}/scripts/build.sh
+      shell: bash
+
+    - name: Package Release
+      if: ${{ inputs.release == 'true' }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: ${{ github.action_path }}/scripts/release.sh
+      shell: bash
