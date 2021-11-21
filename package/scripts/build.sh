@@ -90,7 +90,7 @@ fi
 # After install, create and add to build cache
 mkdir -p /opt/spack-cache
 spack gpg init
-spack gpg create
+spack gpg create "${GITHUB_ACTOR}" "${GITHUB_ACTOR}@users.noreply.github.com"
 spack buildcache create -d /opt/spack-cache ${SPACK_SPEC}
 
 # Did we make stuff?
