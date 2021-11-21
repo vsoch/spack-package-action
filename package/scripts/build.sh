@@ -5,22 +5,24 @@ set -e
 echo $PWD
 ls 
 
-# Show user all variables for debugging
-printf "package: ${INPUT_PACKAGE_NAME}\n"
-printf "package_path: ${INPUT_PACKAGE_PATH}\n"
-printf "flags: ${INPUT_FLAGS}\n"
-
 
 # Setup the spack environment
 . /opt/spack/share/spack/setup-env.sh 
 
 # Create package in spack's repos
-PACKAGE_PATH=/opt/spack/repos/builtin/packages/${INPUT_PACKAGE_NAME}
+PACKAGE_PATH=/opt/spack/var/repos/builtin/packages/${INPUT_PACKAGE_NAME}
 export SPACK_ROOT=/opt/spack
 export SPACK_ADD_DEBUG_FLAGS=true
 
 # Start to formulate spack install command
 SPACK_SPEC="${INPUT_PACKAGE_NAME}"
+
+# Show user all variables for debugging
+printf "package: ${INPUT_PACKAGE_NAME}\n"
+printf "package_custom_path: ${INPUT_PACKAGE_PATH}\n"
+printf "package_path: ${PACKAGE_PATH}\n"
+printf "flags: ${INPUT_FLAGS}\n"
+printf "spec: ${SPACK_SPEC}\n"
 
 # Do we want a custom compiler / variants?
 if [ ! -z ${INPUT_FLAGS} ]; then
