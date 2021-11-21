@@ -3,8 +3,6 @@
 set -e
 
 # Show the user all relevant variables for debugging!
-printf "package: ${INPUT_PACKAGE}\n"
-printf "package_path: ${INPUT_PACKAGE_PATH}\n"
 printf "release: ${INPUT_RELEASE}\n"
 printf "branch: ${INPUT_BRANCH}\n"
 printf "repos: ${INPUT_REPOS}\n"
@@ -13,7 +11,7 @@ printf "repos: ${INPUT_REPOS}\n"
 printf "Installing spack dependencies...\n"
 
 sudo apt update -q -y \
-  && sudo apt install -y -q \
+  && sudo apt install -y \
       autoconf \
       automake \
       bzip2 \
