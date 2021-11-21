@@ -70,5 +70,6 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
         INPUT_TAG: ${{ inputs.tag }}
         BUILD_CACHE: ${{ env.build_cache }}
+        SPACK_ROOT: /opt/spack
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash
