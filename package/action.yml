@@ -50,7 +50,6 @@ runs:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         INPUT_PACKAGE_PATH: ${{ inputs.package_path }}
         INPUT_FLAGS: ${{ inputs.flags }}
-        # ACTION_DIR: ${{ github.action_path }}
       run: ${{ github.action_path }}/scripts/build.sh
       shell: bash
 

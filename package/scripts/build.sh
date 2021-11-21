@@ -27,19 +27,13 @@ if [ ! -z ${INPUT_FLAGS} ]; then
     SPACK_SPEC="$SPACK_SPEC ${INPUT_FLAGS}"
 fi
 
-# Case 1: the package directory exists and we don't have a package.py
-if [ -d ${INPUT_PACKAGE_NAME} ] && [ -z "${INPUT_PACKAGE_PATH}" ]; then
-    printf "Package name provided and not custom package.py, will install default package.\n"
-    COMMAND="spack install $SPACK_SPEC"
-    printf "$COMMAND\n"
-    ${COMMAND}    
-    echo $?
+function install_custom_package() {
 
-# Case 2: the package directory exists and we DO have a package.py
-# We assume the code is in the repository
-elif [ -d ${INPUT_PACKAGE_NAME} ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
-    printf "Package name provided that exists and a custom package.py, will install custom package.\n"
-    rm -rf ${PACKAGE_PATH}
+    # Retrieve inputs - the spec, package.py dest, and source
+    SPACK_SPEC="$1"
+    PACKAGE_PATH="$2"
+    INPUT_PACKAGE_PATH="$3"
+
     mkdir -p ${PACKAGE_PATH}
     # Copy all files in the directory
     srcdir=$(dirname ${INPUT_PACKAGE_PATH})
@@ -63,6 +57,29 @@ elif [ -d ${INPUT_PACKAGE_NAME} ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
     spack add ${SPACK_SPEC}
     spack --debug install        
     echo $?
+}
+
+# Case 1: the package directory exists and we don't have a custom package.py
+if [ -d "${PACKAGE_PATH}" ] && [ -z "${INPUT_PACKAGE_PATH}" ]; then
+    printf "Package name provided and not custom package.py, will install default package.\n"
+    COMMAND="spack install $SPACK_SPEC"
+    printf "$COMMAND\n"
+    ${COMMAND}    
+    echo $?
+
+# Case 2: the package directory exists and we DO have a package.py
+# We assume the code is in the repository
+elif [ -d "${PACKAGE_PATH}" ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
+    printf "Package name provided that exists and a custom package.py, will install custom package.\n"
+    rm -rf ${PACKAGE_PATH}
+    install_custom_package "${SPACK_SPEC}" "${PACKAGE_PATH}" "${INPUT_PACKAGE_PATH}"
+
+# Case 3: the package directory doesn't exist and we have a custom package.py
+# We also assume the code is in the repository
+elif [ -d "${PACKAGE_PATH}" ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
+    printf "Package name provided that does NOT exist and a custom package.py, will install custom package.\n"
+    install_custom_package "${SPACK_SPEC}" "${PACKAGE_PATH}" "${INPUT_PACKAGE_PATH}"
+
 else
     printf "You must either provide a package name (package) OR a custom package path (package_path)\n"
     exit 1
