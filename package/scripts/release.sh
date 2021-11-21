@@ -5,6 +5,11 @@ set -e
 echo $PWD
 ls 
 
+printf "package: ${INPUT_PACKAGE_NAME}\n"
+printf "actor: ${GITHUB_ACTOR}\n"
+printf "tag: ${INPUT_TAG}\n"
+
+
 # Setup the spack environment
 . "${SPACK_ROOT}/share/spack/setup-env.sh"
 
