@@ -7,6 +7,7 @@ inputs:
   root:
     description: root to install spack to (defaults to /opt/spack)
     required: false
+    default: /opt/spack
   branch:
     description: The branch of spack to use (defaults to develop)
     required: false
