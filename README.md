@@ -1,7 +1,13 @@
 # Spack Package Action
 
 Can we build and release a spack package alongside a repository, either in binary or container form? 
-Let's find out!
+Let's find out! This repository serves three different actions:
+
+ - [*install spack*](#install-spack): hey, just need spack for your own purposes? We got you covered!
+ - [*release binaries*](#package-binary-release): build and (optionally) release spack binaries to GitHub packages
+ - [*spack containers*](#package-container-build): build and (optionally) deploy a container with spack packages to GitHub packages
+
+## Install Spack
 
 ## Package Binary Build
 

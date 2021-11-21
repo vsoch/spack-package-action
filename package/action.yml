@@ -47,6 +47,7 @@ runs:
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
+        INPUT_ROOT: /opt/spack
       run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
