@@ -36,12 +36,18 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Set Root Directory
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      run: ${{ github.action_path }}/scripts/set_root.sh
+      shell: bash
+
     - name: Install Spack and Dependencies
       env:
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
-      run: ${{ github.action_path }}/scripts/setup.sh
+      run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
     - name: Build Package
