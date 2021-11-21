@@ -30,8 +30,8 @@ inputs:
     default: false
 
 outputs:
-  filename:
-    description: "Output file generated"
+  spec:
+    description: "Spec used for build"
     
 runs:
   using: "composite"

@@ -6,9 +6,9 @@ echo $PWD
 ls 
 
 # Show user all variables for debugging
-printf "package: ${INPUT_PACKAGE_NAME}"
-printf "package_path: ${INPUT_PACKAGE_PATH}"
-printf "flags: ${INPUT_FLAGS}"
+printf "package: ${INPUT_PACKAGE_NAME}\n"
+printf "package_path: ${INPUT_PACKAGE_PATH}\n"
+printf "flags: ${INPUT_FLAGS}\n"
 
 
 # Setup the spack environment
@@ -23,7 +23,7 @@ export SPACK_ADD_DEBUG_FLAGS=true
 SPACK_SPEC="${INPUT_PACKAGE_NAME}"
 
 # Do we want a custom compiler / variants?
-if [ -d ${INPUT_FLAGS} ]; then
+if [ ! -z ${INPUT_FLAGS} ]; then
     SPACK_SPEC="$SPACK_SPEC ${INPUT_FLAGS}"
 fi
 
@@ -63,6 +63,9 @@ elif [ -d ${INPUT_PACKAGE_NAME} ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
     spack add ${SPACK_SPEC}
     spack --debug install        
     echo $?
+else
+    printf "You must either provide a package name (package) OR a custom package path (package_path)\n"
+    exit 1
 fi
 
 # After install, create and add to build cache
@@ -71,3 +74,6 @@ spack buildcache create -d /opt/spack-cache ${SPACK_SPEC}
 
 # Did we make stuff?
 tree /opt/spack-cache
+
+# Set output for spec, and TODO binary to upload/save for next step
+echo "::set-output name=spec::${SPACL_SPEC}"
