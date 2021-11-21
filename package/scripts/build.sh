@@ -5,11 +5,19 @@ set -e
 echo $PWD
 ls 
 
+# Show user all variables for debugging
+printf "package: ${INPUT_PACKAGE_NAME}"
+printf "package_path: ${INPUT_PACKAGE_PATH}"
+printf "flags: ${INPUT_FLAGS}"
+
+
 # Setup the spack environment
 . /opt/spack/share/spack/setup-env.sh 
 
 # Create package in spack's repos
 PACKAGE_PATH=/opt/spack/repos/builtin/packages/${INPUT_PACKAGE_NAME}
+export SPACK_ROOT=/opt/spack
+export SPACK_ADD_DEBUG_FLAGS=true
 
 # Start to formulate spack install command
 SPACK_SPEC="${INPUT_PACKAGE_NAME}"

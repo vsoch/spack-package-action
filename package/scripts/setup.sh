@@ -2,11 +2,18 @@
 
 set -e
 
+# Show the user all relevant variables for debugging!
+printf "package: ${INPUT_PACKAGE}\n"
+printf "package_path: ${INPUT_PACKAGE_PATH}\n"
+printf "release: ${INPUT_RELEASE}\n"
+printf "branch: ${INPUT_BRANCH}\n"
+printf "repos: ${INPUT_REPOS}\n"
+
 # GitHub supports ubuntu, so the setup here assumes that
 printf "Installing spack dependencies...\n"
 
-apt update -q -y \
-  && apt install -y -q \
+sudo apt update -q -y \
+  && sudo apt install -y -q \
       autoconf \
       automake \
       bzip2 \
