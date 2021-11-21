@@ -1,4 +1,4 @@
-name: Build Containers
+name: Spack Package Build and Release
 on:
   pull_request: []
   push:

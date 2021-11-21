@@ -59,7 +59,7 @@ export SPACK_ADD_DEBUG_FLAGS=true
 printf "Installing spack...\n"
     
 # Do we have a release or a branch?
-if [ ! -z "${INPUT_RELEASE}" ]; then
+if [ "${INPUT_RELEASE}" != "" ]; then
     wget https://github.com/spack/spack/releases/download/v${INPUT_RELEASE}/spack-${INPUT_RELEASE}.tar.gz
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
     mv spack-${INPUT_RELEASE} /opt/spack

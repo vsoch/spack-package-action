@@ -17,6 +17,7 @@ inputs:
   release:
     description: A spack release to use (if defined, overrides branch)
     required: false
+    default: ""
   token:
     description: A GitHub token required if releasing artifacts to the same repository
     required: true
