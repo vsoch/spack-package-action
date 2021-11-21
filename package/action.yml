@@ -23,8 +23,8 @@ inputs:
   flags:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
-  release:
-    description: Release package to GitHub repository (token is required)
+  deploy:
+    description: Deploy (release) package to GitHub repository (token is required)
     required: true
     default: false
 
@@ -54,7 +54,7 @@ runs:
       shell: bash
 
     - name: Package Release
-      if: ${{ inputs.release == 'true' }}
+      if: ${{ inputs.deploy == 'true' }}
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: ${{ github.action_path }}/scripts/release.sh
