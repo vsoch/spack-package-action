@@ -24,6 +24,9 @@ inputs:
   flags:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
+  tag:
+    description: Tag to use for package (defaults to commit)
+    required: false
   deploy:
     description: Deploy (release) package to GitHub repository (token is required)
     required: true
@@ -63,6 +66,9 @@ runs:
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
       env:
+        INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
+        INPUT_TAG: ${{ inputs.tag }}
+        BUILD_CACHE: ${{ env.build_cache }}
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash

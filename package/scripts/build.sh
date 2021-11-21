@@ -97,4 +97,8 @@ spack buildcache create -d /opt/spack-cache ${SPACK_SPEC}
 tree /opt/spack-cache
 
 # Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::${SPACL_SPEC}"
+echo "::set-output name=spec::${SPACK_SPEC}"
+echo "::set-output name=build_cache::/opt/spack-cache"
+
+echo "spec=${spec}" >> $GITHUB_ENV
+echo "build_cache=/opt/spack-cache" >> $GITHUB_ENV

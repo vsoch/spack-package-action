@@ -27,7 +27,8 @@ jobs:
         uses: ./package
         with:
           package: zlib
-          deploy: ${{ github.event_name != 'pull_request' }}
+          deploy: true
+          #deploy: ${{ github.event_name != 'pull_request' }}
           
   build-container:
     runs-on: ubuntu-latest
