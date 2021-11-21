@@ -11,7 +11,7 @@ printf "repos: ${INPUT_REPOS}\n"
 printf "Installing spack dependencies...\n"
 
 sudo apt update -q -y \
-  && sudo apt install -y \
+  && sudo apt install -y -v \
       autoconf \
       automake \
       bzip2 \

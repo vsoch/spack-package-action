@@ -1,9 +1,11 @@
 # Spack Package Action
 
-Can we build and release a spack package alongside a repository? Let's find out!
-The goals of this action will be to:
+Can we build and release a spack package alongside a repository, either in binary or container form? 
+Let's find out!
 
 ## Package Binary Build
+
+The goals of this action will be to:
 
  - build of local package.py, a core package.py, or a package.py from another spack repos repository.
  - choice of spack version or branch to use
