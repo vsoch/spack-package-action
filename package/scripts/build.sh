@@ -10,7 +10,7 @@ ls
 . /opt/spack/share/spack/setup-env.sh 
 
 # Create package in spack's repos
-PACKAGE_PATH=/opt/spack/var/repos/builtin/packages/${INPUT_PACKAGE_NAME}
+PACKAGE_PATH=/opt/spack/var/spack/repos/builtin/packages/${INPUT_PACKAGE_NAME}
 export SPACK_ROOT=/opt/spack
 export SPACK_ADD_DEBUG_FLAGS=true
 

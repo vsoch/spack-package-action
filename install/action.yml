@@ -1,0 +1,29 @@
+name: "Spack Install Action"
+description: "Install your branch or release of spack at your root of choice."
+inputs:
+  repos:
+    description: comma separated list of additional repos to clone and add
+    required: false
+  root:
+    description: root to install spack to (defaults to /opt/spack)
+    required: false
+  branch:
+    description: The branch of spack to use (defaults to develop)
+    required: false
+    default: develop
+  release:
+    description: A spack release to use (if defined, overrides branch)
+    required: false
+    default: ""
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Install Spack and Dependencies
+      env:
+        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_RELEASE: ${{ inputs.release }}
+        INPUT_REPOS: ${{ inputs.repos }}
+        INPUT_ROOT: ${{ inputs.root }}
+      run: ${{ github.action_path }}/scripts/install.sh
+      shell: bash
