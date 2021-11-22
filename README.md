@@ -28,7 +28,7 @@ jobs:
         uses: vsoch/spack-package-action/install
 ```
 
-You can optionall set a spack root to install to (defaults to /opt/spack)
+You can optionally set a spack root to install to (defaults to /opt/spack) or ask for full depth (by default we clone with `--depth 1` to increase the speed of the install, but if you need the git history you can add `full_clone: true`
 
 ```yaml
 jobs:
@@ -42,6 +42,7 @@ jobs:
         uses: vsoch/spack-package-action/install
         with:
           root: /home/spack
+          full_clone: true
 ```
 
 This action is provided in [install](install).
@@ -82,14 +83,22 @@ jobs:
 This action is provided in [package](package), and an example package is shown 
 [here](https://github.com/vsoch/spack-package-action/pkgs/container/spack-package-action%2Fzlib).
 
-## Package Container Build
+To then get the binary, you can [install oras](https://oras.land/cli/) and do:
 
-**under development**
+```bash
+$ oras pull ghcr.io/vsoch/spack-package-action/zlib:46878b236da7283b9b71086044d4e3884e04defa
+```
+The package "spack-package.tar.gz" will then be in the present working directory, which has the contents
+of a build cache with one package.
+
+## Package Container Build
 
 If you instead want to provide a container for your package, you can do that too!
 We will either allow for a spack package name, or a spack.yaml to use directly
-for a custom build. This approach will be in [container](container). You could have a workflow
-that does both, actually!
+for a custom build. This approach will be in [container](container). We will also add some basic
+spack metadata tags
+
+And you could have a workflow that does both, actually! See the [.github/workflows](.github/workflows) for full examples.
   
 For the latter two, the recommended approach will be to build on changes to the codebase (given a codebase here) and release on
 merge into a main branch _or_ a release, depending on your preference.
@@ -97,3 +106,11 @@ merge into a main branch _or_ a release, depending on your preference.
 🚧️ **under development** 🚧️
 
 Documentation and examples coming soon!
+
+## Questions for Discussion
+
+1. Should we add an ability to install a spack binary from GitHub packages (akin to an on the fly build cache?)
+2. What should the namespace of the package be in GitHub packages? Since it's technically one package in a build cache, we could name based on the build hash, but arguably there could be more than one.
+3. Should we preserve the entire thing .tar.gz-ed or just the .spack archive?
+4. Should we have a way to keep a persistent gpg key to sign packages?
+5. What about [spack container labels](https://github.com/spack/label-schema)? How should we include here or extent?

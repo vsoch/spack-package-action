@@ -16,7 +16,11 @@ inputs:
     description: A spack release to use (if defined, overrides branch)
     required: false
     default: ""
-    
+  full_clone:
+    description: Instead of cloning with --depth 1, clone the entire git history (branch only)
+    required: false
+    default: "false"
+
 runs:
   using: "composite"
   steps:
@@ -25,6 +29,7 @@ runs:
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
+        INPUT_FULL_CLONE: ${{ inputs.full_clone }}
         INPUT_ROOT: ${{ inputs.root }}
       run: ${{ github.action_path }}/scripts/install.sh
       shell: bash

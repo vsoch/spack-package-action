@@ -1,40 +1,39 @@
-name: "Spack Binary Release Action"
-description: "Build and release a package.py in a source repository with spack."
+name: "Spack Container Action"
+description: "Build and release a container with spack packages."
 inputs:
   package:
-    description: the name of the package to install
-    required: true
-  package_path:
-    description: the path to the package.py (e.g., spack/package.py). If not provided, default spack used.
+    description: the name of the package to install (if no spack.yaml provided)
     required: false
-  repos:
-    description: comma separated list of additional repos to clone and add
+  spack_yaml:
+    description: Instead of a package name, install from a spack.yaml instead
     required: false
   branch:
-    description: The branch of spack to use (defaults to develop)
+    description: The branch of spack to use to run containerize (defaults to develop)
     required: false
     default: develop
   release:
-    description: A spack release to use (if defined, overrides branch)
+    description: A spack release to use to run containerize (if defined, overrides branch)
     required: false
     default: ""
   token:
-    description: A GitHub token required if releasing artifacts to the same repository
+    description: A GitHub token required if releasing containers to the same repository
     required: true
-  flags:
-    description: Extra flags (compiler, target, variants, etc) to add to the install command
-    required: false
   tag:
-    description: Tag to use for package (defaults to commit)
+    description: An extra tag to give the package (defaults to latest and always GitHub sha)
     required: false
+    default: latest
   deploy:
-    description: Deploy (release) package to GitHub repository (token is required)
+    description: Deploy (release) container to GitHub packages (token is required)
     required: true
     default: false
 
 outputs:
-  spec:
-    description: "Spec used for build"
+  container:
+    description: "Container unique resource identifier (sans tag)"
+  tag:
+    description: "Container custom tag"
+  commit:
+    description: "Container commit (also a tag)"
     
 runs:
   using: "composite"
@@ -54,23 +53,23 @@ runs:
       run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
-    - name: Build Package
+    - name: Build Container
       id: build
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
-        INPUT_PACKAGE_PATH: ${{ inputs.package_path }}
-        INPUT_FLAGS: ${{ inputs.flags }}
+        INPUT_SPACK_YAML: ${{ inputs.spack_yaml }}
+        INPUT_TAG: ${{ inputs.tag }}
+
       run: ${{ github.action_path }}/scripts/build.sh
       shell: bash
 
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
       env:
-        INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
         INPUT_TAG: ${{ inputs.tag }}
-        BUILD_CACHE: ${{ env.build_cache }}
-        SPACK_ROOT: /opt/spack
+        INPUT_ROOT: /opt/spack
+
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash
