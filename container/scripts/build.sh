@@ -63,7 +63,7 @@ spack containerize > Dockerfile
 echo "" >> Dockerfile
 
 # Add a single clone of spack back
-echo "RUN apt-get install -y git && git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
+echo "RUN apt-get update && apt-get install -y git && git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
 echo "ENV PATH=/opt/spack/bin:$PATH" >> Dockerfile
 echo "ENV SPACK_ROOT=/opt/spack" >> Dockerfile
 
@@ -77,9 +77,18 @@ cat Dockerfile
 
 # Use first 8 of Github sha
 SHA=${GITHUB_SHA:0:8}
+
+# Default to name package the same as GitHub repository
+PACKAGE_NAME=${GITHUB_REPOSITORY}
+
+# And if we have a package name, add it
+if [ ! -z "${INPUT_PACKAGE_NAME}" ]; then
+    PACKAGE_NAME=${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}
+fi
+
 # build the docker container! We could eventually just send the Dockerfile to an output
 # and then use BuildX, this is okay for a demo for now, at least until someone asks for differently
-container=ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA}
+container=ghcr.io/${PACKAGE_NAME}:${SHA}
 docker build -t ${container} .
 
 # Apply post labels!
@@ -120,14 +129,6 @@ labels="${labels} --label org.opencontainers.image.description=${description}"
 printf "Adding labels:\n ${labels}"
 echo "FROM ${container}" > Dockerfile.labeled
 docker build -t ${container} -f Dockerfile.labeled ${labels} .
-
-# Default to name package the same as GitHub repository
-PACKAGE_NAME=${GITHUB_REPOSITORY}
-
-# And if we have a package name, add it
-if [ ! -z "${INPUT_PACKAGE_NAME}" ]; then
-    PACKAGE_NAME=${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}
-fi
 
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
     docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${PACKAGE_NAME}:${INPUT_TAG}
