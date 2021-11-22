@@ -204,3 +204,4 @@ merge into a main branch _or_ a release, depending on your preference.
 3. Should we preserve the entire thing .tar.gz-ed or just the .spack archive?
 4. Should we have a way to keep a persistent gpg key to sign packages?
 5. What about [spack container labels](https://github.com/spack/label-schema)? How should we include here or extent?
+6. Should we add these labels to spack containerize instead (I think so)
