@@ -2,11 +2,17 @@
 
 set -e
 
+# Show the user all relevant variables for debugging!
+printf "release: ${INPUT_RELEASE}\n"
+printf "branch: ${INPUT_BRANCH}\n"
+printf "repos: ${INPUT_REPOS}\n"
+printf "root: ${INPUT_ROOT}\n"
+
 # GitHub supports ubuntu, so the setup here assumes that
 printf "Installing spack dependencies...\n"
 
-apt update -q -y \
-  && apt install -y -q \
+sudo apt update -q -y \
+  && sudo apt install -y -v \
       autoconf \
       automake \
       bzip2 \
@@ -53,25 +59,31 @@ python -m pip install --upgrade pip setuptools wheel
 python -m pip install gnureadline boto3 pyyaml pytz minio requests clingo
 rm -rf ~/.cache
 
-export SPACK_ROOT=/opt/spack
+export SPACK_ROOT=${INPUT_ROOT}
 export SPACK_ADD_DEBUG_FLAGS=true
 
 printf "Installing spack...\n"
-    
+
+# Make sure parent of root exists
+parent=$(dirname ${INPUT_ROOT})
+if [ ! -d "${parent}" ]; then
+    mkdir -p ${parent}
+fi
+
 # Do we have a release or a branch?
-if [ ! -z "${INPUT_RELEASE}" ]; then
+if [ "${INPUT_RELEASE}" != "" ]; then
     wget https://github.com/spack/spack/releases/download/v${INPUT_RELEASE}/spack-${INPUT_RELEASE}.tar.gz
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
-    mv spack-${INPUT_RELEASE} /opt/spack
+    mv spack-${INPUT_RELEASE} ${INPUT_ROOT}
 
 # Branch install
 else
-    git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack /opt/spack
+    git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
 fi
 
 # Find compilers
 # The user running the action should install additional compilers before
-cd /opt/spack
+cd ${INPUT_ROOT}
 . share/spack/setup-env.sh
 spack compiler find
 
@@ -85,5 +97,5 @@ if [ ! -z "${INPUT_REPOS}" ]; then
         git clone $repo $clone_dir        
         spack repo add $clone_dir
     done
-    cd /opt/spack
+    cd ${INPUT_ROOT}
 fi

@@ -17,30 +17,41 @@ inputs:
   release:
     description: A spack release to use (if defined, overrides branch)
     required: false
+    default: ""
   token:
     description: A GitHub token required if releasing artifacts to the same repository
     required: true
   flags:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
-  release:
-    description: Release package to GitHub repository (token is required)
+  tag:
+    description: Tag to use for package (defaults to commit)
+    required: false
+  deploy:
+    description: Deploy (release) package to GitHub repository (token is required)
     required: true
     default: false
 
 outputs:
-  filename:
-    description: "Output file generated"
+  spec:
+    description: "Spec used for build"
     
 runs:
   using: "composite"
   steps:
+    - name: Set Root Directory
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      run: ${{ github.action_path }}/scripts/set_root.sh
+      shell: bash
+
     - name: Install Spack and Dependencies
       env:
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
-      run: ${{ github.action_path }}/scripts/setup.sh
+        INPUT_ROOT: /opt/spack
+      run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
     - name: Build Package
@@ -49,13 +60,20 @@ runs:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         INPUT_PACKAGE_PATH: ${{ inputs.package_path }}
         INPUT_FLAGS: ${{ inputs.flags }}
-        # ACTION_DIR: ${{ github.action_path }}
       run: ${{ github.action_path }}/scripts/build.sh
       shell: bash
 
     - name: Package Release
-      if: ${{ inputs.release == 'true' }}
+      if: ${{ inputs.deploy == 'true' }}
       env:
+        INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
+        GITHUB_ACTOR: ${{ github.actor }}
+
+        # TODO this should be a branch or sha
+        GITHUB_SHA: latest
+        INPUT_TAG: ${{ inputs.tag }}
+        BUILD_CACHE: ${{ env.build_cache }}
+        SPACK_ROOT: /opt/spack
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash

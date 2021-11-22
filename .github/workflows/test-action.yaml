@@ -1,4 +1,4 @@
-name: Build Containers
+name: Spack Package Build and Release
 on:
   pull_request: []
   push:
@@ -6,6 +6,15 @@ on:
       - main 
  
 jobs:
+  install-spack:
+    runs-on: ubuntu-latest
+    name: Install Spack
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Spack
+        uses: ./install
+
   build-binaries:
     runs-on: ubuntu-latest
     permissions:
@@ -15,10 +24,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Spack Package
-        uses: ./package@main
+        uses: ./package
         with:
           package: zlib
-          release: ${{ github.event_name != 'pull_request' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
           
   build-container:
     runs-on: ubuntu-latest
