@@ -97,16 +97,16 @@ labels=""
 # Add labels with name and version if we have a package name and not yaml
 if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
     labels="${labels} --label org.spack.package.name=${INPUT_PACKAGE_NAME}"
-    version=$(docker run -i --entrypoint spack --rm ${container} spack find --format "{version}" ${INPUT_PACKAGE_NAME})    
+    version=$(docker run -i --entrypoint spack --rm ${container} find --format "{version}" ${INPUT_PACKAGE_NAME})    
     labels="${labels} --label org.spack.package.version=${version}"
     description="Spack package container with ${INPUT_PACKAGE_NAME}@${version}"
 
 # Otherwise, get all packages installed in list
 else
-    count=$(docker run -i --entrypoint spack --rm ${container} spack find --format "{name}" | wc -l)
+    count=$(docker run -i --entrypoint spack --rm ${container} find --format "{name}" | wc -l)
     description="Spack package container with ${count} packages."
     packages=""
-    for package in $(docker run -i --entrypoint spack --rm ${container} spack find --format "{name}@{version}" | uniq); do 
+    for package in $(docker run -i --entrypoint spack --rm ${container} find --format "{name}@{version}" | uniq); do 
        packages="$packages,$package"
     done
 
@@ -117,7 +117,7 @@ fi
 
 # Get compilers in image
 compilers=""
-for compiler in $(docker run -i --entrypoint spack --rm ${container} spack find --format "{compiler}" | uniq); do 
+for compiler in $(docker run -i --entrypoint spack --rm ${container} find --format "{compiler}" | uniq); do 
    compilers="$compilers,$compiler"
 done
 
