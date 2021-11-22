@@ -21,6 +21,7 @@ inputs:
   token:
     description: A GitHub token required if releasing artifacts to the same repository
     required: true
+    default: ${{ secrets.GITHUB_TOKEN }}
   flags:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
@@ -69,6 +70,8 @@ runs:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
+
+        # TODO this should be a branch or sha
         GITHUB_SHA: latest
         INPUT_TAG: ${{ inputs.tag }}
         BUILD_CACHE: ${{ env.build_cache }}
