@@ -68,7 +68,7 @@ printf "Installing spack...\n"
 parent=$(dirname ${INPUT_ROOT})
 if [ ! -d "${parent}" ]; then
     mkdir -p ${parent}
-done
+fi
 
 # Do we have a release or a branch?
 if [ "${INPUT_RELEASE}" != "" ]; then
