@@ -27,7 +27,6 @@ jobs:
         uses: ./package
         with:
           package: zlib
-          deploy: true
           token: ${{ secrets.GITHUB_TOKEN }}
           deploy: ${{ github.event_name != 'pull_request' }}
           
