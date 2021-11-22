@@ -25,7 +25,8 @@ if [ -z "${INPUT_SPACK_YAML}" ]; then
 cat > spack.yaml <<EOL
 spack:
   view: true
-  specs: ["${INPUT_PACKAGE_NAME}"]
+  specs:
+    - ${INPUT_PACKAGE_NAME}
   config:
     concretizer: clingo
     compiler:
@@ -58,14 +59,16 @@ spack containerize > Dockerfile
 
 echo "" >> Dockerfile
 
-# Add labels if we have a package name and not yaml
+# Add labels with name and version if we have a package name and not yaml
 if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
     echo "LABEL org.spack.package.name=${INPUT_PACKAGE_NAME}" >> Dockerfile
+    version=$(spack find --format "{version}" ${INPUT_PACKAGE_NAME})
+    echo "LABEL org.spack.package.version=${version}" >> Dockerfile
 
 # Otherwise, get all packages installed in list
 else
     packages=""
-    for package in $(spack find --format "{name}" | uniq); do 
+    for package in $(spack find --format "{name}@{version}" | uniq); do 
        packages="$packages,$package"
     done
 
@@ -77,7 +80,7 @@ fi
 # Get compilers in image
 compilers=""
 for compiler in $(spack find --format "{compiler}" | uniq); do 
-   compilres="$compilers,$compiler"
+   compilers="$compilers,$compiler"
 done
 
 # Strip commas
@@ -88,6 +91,9 @@ echo "LABEL org.spack.compilers=${compilers}" >> Dockerfile
 if [ -z "${INPUT_TAG}" ]; then
     INPUT_TAG=${GITHUB_SHA}
 fi
+
+printf "Preparing to build Dockerfile"
+cat Dockerfile
 
 # build the docker container! We could eventually just send the Dockerfile to an output
 # and then use BuildX, this is okay for a demo for now, at least until someone asks for differently

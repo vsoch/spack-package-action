@@ -28,7 +28,7 @@ printf "Creating .tar.gz of spack build cache to upload\n"
 
 # Upload relative to cache directory root so structure is predictible
 cd ${BUILD_CACHE}
-tar -czvf spack-package.tar.gz .
+tar -czvf spack-package.tar.gz build_cache
 
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then

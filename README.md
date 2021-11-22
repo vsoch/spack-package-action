@@ -96,16 +96,32 @@ of a build cache with one package.
 If you instead want to provide a container for your package, you can do that too!
 We will either allow for a spack package name, or a spack.yaml to use directly
 for a custom build. This approach will be in [container](container). We will also add some basic
-spack metadata tags
+spack metadata tags as defined by the [spack/label-schema](https://github.com/spack/label-schema) include
+the package (or packages) and compilers.
 
-And you could have a workflow that does both, actually! See the [.github/workflows](.github/workflows) for full examples.
+```bash
+jobs:
+  build-container:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    name: Build Package Container
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Spack Container
+        uses: ./container
+        with:
+          package: zlib
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
+```
+
+And you don't need to choose just one of the above - you could have a workflow that does both, actually! 
+See the [.github/workflows](.github/workflows) for full examples.
   
-For the latter two, the recommended approach will be to build on changes to the codebase (given a codebase here) and release on
+For the package builds (binary or container) the recommended approach will be to build on changes to the codebase (given a codebase here) and release on
 merge into a main branch _or_ a release, depending on your preference.
-
-🚧️ **under development** 🚧️
-
-Documentation and examples coming soon!
 
 ## Questions for Discussion
 
