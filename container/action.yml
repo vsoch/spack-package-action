@@ -59,6 +59,7 @@ runs:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         INPUT_SPACK_YAML: ${{ inputs.spack_yaml }}
         INPUT_TAG: ${{ inputs.tag }}
+        SPACK_ROOT: /opt/spack
 
       run: ${{ github.action_path }}/scripts/build.sh
       shell: bash
@@ -69,7 +70,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
         INPUT_TAG: ${{ inputs.tag }}
-        INPUT_ROOT: /opt/spack
+        SPACK_ROOT: /opt/spack
 
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash

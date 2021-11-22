@@ -3,7 +3,7 @@
 set -e
 
 # Setup the spack environment
-. ${INPUT_ROOT}/share/spack/setup-env.sh 
+. ${SPACK_ROOT}/share/spack/setup-env.sh 
 
 
 # Login to GitHub packages
