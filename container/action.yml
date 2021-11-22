@@ -67,6 +67,7 @@ runs:
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
       env:
+        INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
         INPUT_TAG: ${{ inputs.tag }}
