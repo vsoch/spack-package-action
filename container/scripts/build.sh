@@ -63,7 +63,7 @@ spack containerize > Dockerfile
 echo "" >> Dockerfile
 
 # Add a single clone of spack back
-echo "RUN apt-get update && apt-get install -y git && git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
+echo "RUN apt-get update && apt-get install -y git python3 && git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
 echo "ENV PATH=/opt/spack/bin:$PATH" >> Dockerfile
 echo "ENV SPACK_ROOT=/opt/spack" >> Dockerfile
 

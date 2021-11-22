@@ -4,7 +4,7 @@ Can we build and release a spack package alongside a repository, either in binar
 Let's find out! This repository serves three different actions:
 
  - [*install spack*](#install-spack): hey, just need spack for your own purposes? We got you covered!
- - [*release binaries*](#package-binary-release): build and (optionally) release spack binaries to GitHub packages
+ - [*release binaries*](#package-binary-build): build and (optionally) release spack binaries to GitHub packages
  - [*spack containers*](#package-container-build): build and (optionally) deploy a container with spack packages to GitHub packages
 
 For examples of all three, see the [GitHub workflows](.github/workflows) or keep reading. If you'd like to
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Spack
-        uses: vsoch/spack-package-action/install
+        uses: vsoch/spack-package-action/install@main
 ```
 
 You can optionally set a spack root to install to (defaults to /opt/spack) or ask for full depth (by default we clone with `--depth 1` to increase the speed of the install, but if you need the git history you can add `full_clone: true`
@@ -39,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Spack
-        uses: vsoch/spack-package-action/install
+        uses: vsoch/spack-package-action/install@main
         with:
           root: /home/spack
           full_clone: true
@@ -82,7 +82,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Spack Package
-        uses: vsoch/spack-package-action@main
+        uses: vsoch/spack-package-action/package@main
         with:
           package: zlib
           deploy: true
@@ -144,7 +144,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Spack Container
-        uses: ./container
+        uses: vsoch/spack-package-action/container@main
         with:
           package: zlib
           token: ${{ secrets.GITHUB_TOKEN }}
