@@ -63,7 +63,13 @@ export SPACK_ROOT=${INPUT_ROOT}
 export SPACK_ADD_DEBUG_FLAGS=true
 
 printf "Installing spack...\n"
-    
+
+# Make sure parent of root exists
+parent=$(dirname ${INPUT_ROOT})
+if [ ! -d "${parent}" ]; then
+    mkdir -p ${parent}
+done
+
 # Do we have a release or a branch?
 if [ "${INPUT_RELEASE}" != "" ]; then
     wget https://github.com/spack/spack/releases/download/v${INPUT_RELEASE}/spack-${INPUT_RELEASE}.tar.gz
