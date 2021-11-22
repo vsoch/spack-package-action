@@ -103,12 +103,12 @@ else
     description="Spack package container with several packages."
 fi
 
-labels="${labels} --label org.opencontainers.image.description=${description}"
-
-printf "Adding labels:\n ${labels}"
-echo "FROM ${container}" > Dockerfile.labeled
-printf "docker build -f Dockerfile.labeled ${labels} -t ${container} ."
-docker build -f Dockerfile.labeled ${labels} -t ${container} .
+# Don't bother rebuilding for now, these labels should be added with spack containerize
+# labels="${labels} --label org.opencontainers.image.description=${description}"
+# printf "Adding labels:\n ${labels}"
+# echo "FROM ${container}" > Dockerfile.labeled
+# printf "docker build -f Dockerfile.labeled ${labels} -t ${container} ."
+# docker build -f Dockerfile.labeled ${labels} -t ${container} .
 
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
     docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${PACKAGE_NAME}:${INPUT_TAG}
