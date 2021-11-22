@@ -63,7 +63,7 @@ spack containerize > Dockerfile
 echo "" >> Dockerfile
 
 # Add a single clone of spack back
-echo "RUN git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
+echo "RUN apt-get install -y git && git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
 echo "ENV PATH=/opt/spack/bin:$PATH" >> Dockerfile
 echo "ENV SPACK_ROOT=/opt/spack" >> Dockerfile
 
@@ -130,7 +130,7 @@ if [ ! -z "${INPUT_PACKAGE_NAME}" ]; then
 fi
 
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
-    docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
+    docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${PACKAGE_NAME}:${INPUT_TAG}
 fi
 
 docker images | grep ghcr.io
