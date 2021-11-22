@@ -117,6 +117,25 @@ jobs:
           deploy: ${{ github.event_name != 'pull_request' }}
 ```
 
+### Variables
+
+| name | description | default | example | required |
+|------|-------------|---------|---------|----------|
+|package | the name of a package to install | unset | zlib | false |
+| package_path | the path to a package.py to add instead | unset | spack/package.py | false |
+| repos | comma separated list of additional repos to clone and add | unset | https://github.com/rbogle/spack-repo | false
+| branch | The branch of spack to use | develop | feature-branch | false | 
+| release | A spack release to use (if defined, overrides branch) | unset | 0.17.0 | false |
+| token | A GitHub token required if releasing artifacts to the same repository | unset | `${{ secrets.GITHUB_TOKEN }}` | false |
+| flags |Extra flags (compiler, target, variants, etc) to add to the install command | unset | +debug | false |
+| tag | Tag to use for package | latest | v10.0.0 | false |
+| deploy | Deploy (release) package to GitHub repository (token is required) | false | true | true |
+
+The interesting thing about building on actions is that you get a different builder each time, so your
+spack build hashes (that identify the package) are going to vary. This could be a good thing to provide lots
+of different supported packages, or bad if you want consistently the same one. Likely you can pin this by setting a target
+in the `flags` for the package.
+
 And you don't need to choose just one of the above - you could have a workflow that does both, actually! 
 See the [.github/workflows](.github/workflows) for full examples.
   

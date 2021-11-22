@@ -57,43 +57,6 @@ spack containerize > Dockerfile
 
 echo "" >> Dockerfile
 
-# Add labels with name and version if we have a package name and not yaml
-if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
-    echo "LABEL org.spack.package.name=${INPUT_PACKAGE_NAME}" >> Dockerfile
-    version=$(spack find --format "{version}" ${INPUT_PACKAGE_NAME})
-    echo "LABEL org.spack.package.version=${version}" >> Dockerfile
-    description="Spack package container with ${INPUT_PACKAGE_NAME}@${version}"
-
-# Otherwise, get all packages installed in list
-else
-    count=$(spack find --format "{name}" | wc -l)
-    description="Spack package container with ${count} packages."
-    packages=""
-    for package in $(spack find --format "{name}@{version}" | uniq); do 
-       packages="$packages,$package"
-    done
-
-    # Strip commas
-    packages=$(python -c "print('${packages}'.strip(','))")
-    printf "Adding packages label to Dockerfile:"
-    printf "LABEL org.spack.packages=${packages}\n"
-    echo "LABEL org.spack.packages=${packages}" >> Dockerfile
-fi
-
-# Get compilers in image
-compilers=""
-for compiler in $(spack find --format "{compiler}" | uniq); do 
-   compilers="$compilers,$compiler"
-done
-
-# Strip commas
-compilers=$(python -c "print('${compilers}'.strip(','))")
-printf "Adding compilers label to Dockerfile:"
-printf "LABEL org.spack.compilers=${compilers}\n"
-echo "LABEL org.spack.compilers=${compilers}" >> Dockerfile
-
-echo "LABEL org.opencontainers.image.description=${description}" >> Dockerfile
-
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
     INPUT_TAG=${GITHUB_SHA}
@@ -106,7 +69,48 @@ cat Dockerfile
 SHA=${GITHUB_SHA:0:8}
 # build the docker container! We could eventually just send the Dockerfile to an output
 # and then use BuildX, this is okay for a demo for now, at least until someone asks for differently
-docker build -t ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA} .
+container=ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA}
+docker build -t ${container} .
+
+# Apply post labels!
+labels = ""
+ 
+# Add labels with name and version if we have a package name and not yaml
+if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
+    labels="${labels} --label org.spack.package.name=${INPUT_PACKAGE_NAME}"
+    version=$(docker run -i --rm ${container} spack find --format "{version}" ${INPUT_PACKAGE_NAME})    
+    labels="${labels} --label org.spack.package.version=${version}"
+    description="Spack package container with ${INPUT_PACKAGE_NAME}@${version}"
+
+# Otherwise, get all packages installed in list
+else
+    count=$(docker run -i --rm ${container} spack find --format "{name}" | wc -l)
+    description="Spack package container with ${count} packages."
+    packages=""
+    for package in $(docker run -i --rm ${container} spack find --format "{name}@{version}" | uniq); do 
+       packages="$packages,$package"
+    done
+
+    # Strip commas
+    packages=$(python -c "print('${packages}'.strip(','))")
+    labels="${labels} --label org.spack.packages=${packages}"
+fi
+
+# Get compilers in image
+compilers=""
+for compiler in $(spack find --format "{compiler}" | uniq); do 
+   compilers="$compilers,$compiler"
+done
+
+# Strip commas
+compilers=$(python -c "print('${compilers}'.strip(','))")
+labels="${labels} --label org.spack.compilers=${compilers}"
+labels="${labels} --label org.opencontainers.image.description=${description}"
+
+printf "Adding labels:\n ${labels}"
+echo "FROM ${container}" > Dockerfile.labeled
+docker build -t ${container} -f Dockerfile.labeled ${labels} .
+
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
     docker tag ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
 fi

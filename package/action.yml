@@ -25,7 +25,7 @@ inputs:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
   tag:
-    description: Tag to use for package (defaults to commit)
+    description: Tag to use for package (defaults to latest)
     required: false
   deploy:
     description: Deploy (release) package to GitHub repository (token is required)
