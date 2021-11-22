@@ -73,7 +73,7 @@ container=ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA}
 docker build -t ${container} .
 
 # Apply post labels!
-labels = ""
+labels=""
  
 # Add labels with name and version if we have a package name and not yaml
 if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then

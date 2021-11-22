@@ -7,10 +7,10 @@ Let's find out! This repository serves three different actions:
  - [*release binaries*](#package-binary-release): build and (optionally) release spack binaries to GitHub packages
  - [*spack containers*](#package-container-build): build and (optionally) deploy a container with spack packages to GitHub packages
 
-
 For examples of all three, see the [GitHub workflows](.github/workflows) or keep reading. If you'd like to
 see a different or custom example or request additional functionality or changes, please don't hesitate
-to [open an issue](https://github.com/vsoch/spack-package-action/issues).
+to [open an issue](https://github.com/vsoch/spack-package-action/issues). I haven't tested all possible
+use cases for the action, so please do open an issue if you hit a bug and I'll help asap!
 
 ## Install Spack
 
@@ -46,6 +46,16 @@ jobs:
 ```
 
 This action is provided in [install](install).
+
+### Variables
+
+| name | description | default | example | required |
+|------|-------------|---------|---------|----------|
+| repos | comma separated list of additional repos to clone and add | unset | https://github.com/rbogle/spack-repo | false
+| branch | The branch of spack to use | develop | feature-branch | false | 
+| release | A spack release to use (if defined, overrides branch) | unset | 0.17.0 | false |
+| root |  root to install spack to | /opt/spack | /home/spack | false |
+| full_clone |  Instead of cloning with --depth 1, clone the entire git history (branch only) | false | true | false |
 
 ## Package Binary Build
 
@@ -83,13 +93,37 @@ jobs:
 This action is provided in [package](package), and an example package is shown 
 [here](https://github.com/vsoch/spack-package-action/pkgs/container/spack-package-action%2Fzlib).
 
+### Oras Pull
+
 To then get the binary, you can [install oras](https://oras.land/cli/) and do:
 
 ```bash
 $ oras pull ghcr.io/vsoch/spack-package-action/zlib:46878b236da7283b9b71086044d4e3884e04defa
 ```
+
 The package "spack-package.tar.gz" will then be in the present working directory, which has the contents
-of a build cache with one package.
+of a build cache with one package. See [questions](#questions-for-discussion) for some things to talk about!
+For example, we could easily add this to spack proper as a *much* easier to use build cache than say, needing
+to pay all the monies for AWS and get lost in the interface of bouncy doom.
+
+### Variables
+
+| name | description | default | example | required |
+|------|-------------|---------|---------|----------|
+| package | the name of a package to install | unset | zlib | false |
+| package_path | the path to a package.py to add instead | unset | spack/package.py | false |
+| repos | comma separated list of additional repos to clone and add | unset | https://github.com/rbogle/spack-repo | false
+| branch | The branch of spack to use | develop | feature-branch | false | 
+| release | A spack release to use (if defined, overrides branch) | unset | 0.17.0 | false |
+| token | A GitHub token required if releasing artifacts to the same repository | unset | `${{ secrets.GITHUB_TOKEN }}` | false |
+| flags | Extra flags (compiler, target, variants, etc) to add to the install command | unset | +debug | false |
+| tag | Tag to use for package | latest | v10.0.0 | false |
+| deploy | Deploy (release) package to GitHub repository (token is required) | false | true | true |
+
+The interesting thing about building on actions is that you get a different builder each time, so your
+spack build hashes (that identify the package) are going to vary. This could be a good thing to provide lots
+of different supported packages, or bad if you want consistently the same one. Likely you can pin this by setting a target
+in the `flags` for the package.
 
 ## Package Container Build
 
@@ -117,30 +151,28 @@ jobs:
           deploy: ${{ github.event_name != 'pull_request' }}
 ```
 
+And you don't need to choose just one of the above - you could have a workflow that does both, actually! 
+See the [.github/workflows](.github/workflows) for full examples.
+
 ### Variables
 
 | name | description | default | example | required |
 |------|-------------|---------|---------|----------|
-|package | the name of a package to install | unset | zlib | false |
-| package_path | the path to a package.py to add instead | unset | spack/package.py | false |
-| repos | comma separated list of additional repos to clone and add | unset | https://github.com/rbogle/spack-repo | false
+| package | the name of a package to install | unset | zlib | false |
+| spack_yaml | Instead of a package name, install from a spack.yaml instead | unset | spack.yaml | false |
 | branch | The branch of spack to use | develop | feature-branch | false | 
 | release | A spack release to use (if defined, overrides branch) | unset | 0.17.0 | false |
 | token | A GitHub token required if releasing artifacts to the same repository | unset | `${{ secrets.GITHUB_TOKEN }}` | false |
-| flags |Extra flags (compiler, target, variants, etc) to add to the install command | unset | +debug | false |
 | tag | Tag to use for package | latest | v10.0.0 | false |
 | deploy | Deploy (release) package to GitHub repository (token is required) | false | true | true |
 
-The interesting thing about building on actions is that you get a different builder each time, so your
-spack build hashes (that identify the package) are going to vary. This could be a good thing to provide lots
-of different supported packages, or bad if you want consistently the same one. Likely you can pin this by setting a target
-in the `flags` for the package.
+You can specify a `spack_yaml` OR a `package` but not both, and the same for `release` and `branch`. 
 
-And you don't need to choose just one of the above - you could have a workflow that does both, actually! 
-See the [.github/workflows](.github/workflows) for full examples.
-  
+## Common
+
 For the package builds (binary or container) the recommended approach will be to build on changes to the codebase (given a codebase here) and release on
 merge into a main branch _or_ a release, depending on your preference.
+
 
 ## Questions for Discussion
 
