@@ -73,7 +73,9 @@ else
     done
 
     # Strip commas
+    echo $packages
     packages=$(python -c "print('${packages}'.strip(','))")
+    echo $packages
     echo "LABEL org.spack.packages=${packages}" >> Dockerfile
 fi
 
@@ -84,7 +86,9 @@ for compiler in $(spack find --format "{compiler}" | uniq); do
 done
 
 # Strip commas
+echo $compilers
 compilers=$(python -c "print('${compilers}'.strip(','))")
+echo $compilers
 echo "LABEL org.spack.compilers=${compilers}" >> Dockerfile
 
 # Do we have a tag?
