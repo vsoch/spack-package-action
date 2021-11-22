@@ -95,6 +95,7 @@ docker build -t ${container} .
 labels=""
  
 # Add labels with name and version if we have a package name and not yaml
+# TODO this should be done with spack containerize
 if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
     labels="${labels} --label org.spack.package.name=${INPUT_PACKAGE_NAME}"
     version=$(docker run -i --entrypoint spack --rm ${container} find --format "{version}" ${INPUT_PACKAGE_NAME})    
@@ -106,29 +107,38 @@ else
     count=$(docker run -i --entrypoint spack --rm ${container} find --format "{name}" | wc -l)
     description="Spack package container with ${count} packages."
     packages=""
-    for package in $(docker run -i --entrypoint spack --rm ${container} find --format "{name}@{version}" | uniq); do 
+    docker run -i --entrypoint spack --rm ${container} find --format "{name}@{version}" > packages.txt
+    cat packages.txt
+    for package in $(cat packages.txt | uniq); do 
        packages="$packages,$package"
     done
+    printf "Packages: ${packages}\n"
 
     # Strip commas
     packages=$(python -c "print('${packages}'.strip(','))")
+    printf "Packages: ${packages}\n"
+ 
     labels="${labels} --label org.spack.packages=${packages}"
 fi
 
 # Get compilers in image
 compilers=""
-for compiler in $(docker run -i --entrypoint spack --rm ${container} find --format "{compiler}" | uniq); do 
+docker run -i --entrypoint spack --rm ${container} find --format "{compiler}" > compilers.txt
+cat compilers.txt
+for compiler in $(cat compilers.txt | uniq); do 
    compilers="$compilers,$compiler"
 done
 
 # Strip commas
+printf "Compilers: ${compilers}\n"
 compilers=$(python -c "print('${compilers}'.strip(','))")
+printf "Compilers: ${compilers}\n"
 labels="${labels} --label org.spack.compilers=${compilers}"
 labels="${labels} --label org.opencontainers.image.description=${description}"
 
 printf "Adding labels:\n ${labels}"
 echo "FROM ${container}" > Dockerfile.labeled
-docker build -t ${container} -f Dockerfile.labeled ${labels} .
+docker build ${labels} -t ${container} -f Dockerfile.labeled .
 
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
     docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${PACKAGE_NAME}:${INPUT_TAG}
