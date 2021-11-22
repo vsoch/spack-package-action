@@ -32,7 +32,7 @@ tar -czvf spack-package.tar.gz build_cache
 
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
-    INPUT_TAG=${GITHUB_SHA}
+    INPUT_TAG=${GITHUB_SHA:0:8}
 fi
 
 # The package name must include the package and hash, etc.
@@ -40,13 +40,11 @@ fi
 spack_package=$(find ${BUILD_CACHE} -name *.spack)
 spack_package=$(basename $spack_package)
 
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${GITUHB_SHA} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
 
-# Push for GitHub sha always
-oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${GITHUB_SHA} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+# Push for latest
+oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
 
-# And custom tag, if defined
-if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
-    printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
-    oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
-fi
+# And custom tag (which will default to GITHUB_SHA)
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz

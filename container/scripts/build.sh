@@ -41,8 +41,6 @@ spack:
       build:
         - python3-boto3
         - python3-dev
-  mirrors:
-    autamus: s3://autamus-cache
 EOL
 INPUT_SPACK_YAML=spack.yaml
 fi
@@ -64,18 +62,21 @@ if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
     echo "LABEL org.spack.package.name=${INPUT_PACKAGE_NAME}" >> Dockerfile
     version=$(spack find --format "{version}" ${INPUT_PACKAGE_NAME})
     echo "LABEL org.spack.package.version=${version}" >> Dockerfile
+    description="Spack package container with ${INPUT_PACKAGE_NAME}@${version}"
 
 # Otherwise, get all packages installed in list
 else
+    count=$(spack find --format "{name}" | wc -l)
+    description="Spack package container with ${count} packages."
     packages=""
     for package in $(spack find --format "{name}@{version}" | uniq); do 
        packages="$packages,$package"
     done
 
     # Strip commas
-    echo $packages
     packages=$(python -c "print('${packages}'.strip(','))")
-    echo $packages
+    printf "Adding packages label to Dockerfile:"
+    printf "LABEL org.spack.packages=${packages}\n"
     echo "LABEL org.spack.packages=${packages}" >> Dockerfile
 fi
 
@@ -86,10 +87,12 @@ for compiler in $(spack find --format "{compiler}" | uniq); do
 done
 
 # Strip commas
-echo $compilers
 compilers=$(python -c "print('${compilers}'.strip(','))")
-echo $compilers
+printf "Adding compilers label to Dockerfile:"
+printf "LABEL org.spack.compilers=${compilers}\n"
 echo "LABEL org.spack.compilers=${compilers}" >> Dockerfile
+
+echo "LABEL org.opencontainers.image.description=${description}" >> Dockerfile
 
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
@@ -99,11 +102,13 @@ fi
 printf "Preparing to build Dockerfile"
 cat Dockerfile
 
+# Use first 8 of Github sha
+SHA=${GITHUB_SHA:0:8}
 # build the docker container! We could eventually just send the Dockerfile to an output
 # and then use BuildX, this is okay for a demo for now, at least until someone asks for differently
-docker build -t ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${GITHUB_SHA} .
+docker build -t ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA} .
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
-    docker tag ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${GITHUB_SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
+    docker tag ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
 fi
 
 docker images | grep ghcr.io
