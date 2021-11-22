@@ -25,12 +25,26 @@ echo ${GITHUB_TOKEN} | oras login -u ${GITHUB_ACTOR} --password-stdin ghcr.io
 
 # Compress entire build build cache
 printf "Creating .tar.gz of spack build cache to upload\n"
-tar -czvf spack-package.tar.gz ${BUILD_CACHE}
+
+# Upload relative to cache directory root so structure is predictible
+cd ${BUILD_CACHE}
+tar -czvf spack-package.tar.gz build_cache
 
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
-    INPUT_TAG=${GITHUB_SHA}
+    INPUT_TAG=${GITHUB_SHA:0:8}
 fi
 
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
-oras push ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+# The package name must include the package and hash, etc.
+# linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spack
+spack_package=$(find ${BUILD_CACHE} -name *.spack)
+spack_package=$(basename $spack_package)
+
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+
+# Push for latest
+oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+
+# And custom tag (which will default to GITHUB_SHA)
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz

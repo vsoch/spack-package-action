@@ -76,9 +76,13 @@ if [ "${INPUT_RELEASE}" != "" ]; then
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
     mv spack-${INPUT_RELEASE} ${INPUT_ROOT}
 
-# Branch install
+# Branch install, either shallow or full clone
 else
-    git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
+    if [[ "${INPUT_FULL_CLONE}" == "false" ]]; then
+        git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
+    else
+        git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
+    fi
 fi
 
 # Find compilers
