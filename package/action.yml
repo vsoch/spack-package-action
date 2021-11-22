@@ -18,6 +18,9 @@ inputs:
     description: A spack release to use (if defined, overrides branch)
     required: false
     default: ""
+  token:
+    description: A GitHub token required if releasing artifacts to the same repository
+    required: true
   flags:
     description: Extra flags (compiler, target, variants, etc) to add to the install command
     required: false
@@ -64,7 +67,7 @@ runs:
       if: ${{ inputs.deploy == 'true' }}
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
 
         # TODO this should be a branch or sha
