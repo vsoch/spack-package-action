@@ -19,6 +19,11 @@ if [ -z "${INPUT_SPACK_YAML}" ] && [ -z "${INPUT_PACKAGE_NAME}" ]  ; then
     exit 1
 fi
 
+if [ -z "${INPUT_SPACK_YAML}" ] && [ -z "${INPUT_PACKAGE_NAME}" ]  ; then
+    printf "You must define a spack yaml (spack_yaml) or package name (package)\n"
+    exit 1
+fi
+
 # If we don't have a spack yaml, generate from package
 if [ -z "${INPUT_SPACK_YAML}" ]; then
 
@@ -57,6 +62,11 @@ spack containerize > Dockerfile
 
 echo "" >> Dockerfile
 
+# Add a single clone of spack back
+echo "RUN git clone --depth 1 https://github.com/spack/spack /opt/spack" >> Dockerfile
+echo "ENV PATH=/opt/spack/bin:$PATH" >> Dockerfile
+echo "ENV SPACK_ROOT=/opt/spack" >> Dockerfile
+
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
     INPUT_TAG=${GITHUB_SHA}
@@ -78,16 +88,16 @@ labels=""
 # Add labels with name and version if we have a package name and not yaml
 if [ -z "${INPUT_SPACK_YAML}" ] && [ ! -z "${INPUT_PACKAGE_NAME}" ]  ; then
     labels="${labels} --label org.spack.package.name=${INPUT_PACKAGE_NAME}"
-    version=$(docker run -i --rm ${container} spack find --format "{version}" ${INPUT_PACKAGE_NAME})    
+    version=$(docker run -i --entrypoint spack --rm ${container} spack find --format "{version}" ${INPUT_PACKAGE_NAME})    
     labels="${labels} --label org.spack.package.version=${version}"
     description="Spack package container with ${INPUT_PACKAGE_NAME}@${version}"
 
 # Otherwise, get all packages installed in list
 else
-    count=$(docker run -i --rm ${container} spack find --format "{name}" | wc -l)
+    count=$(docker run -i --entrypoint spack --rm ${container} spack find --format "{name}" | wc -l)
     description="Spack package container with ${count} packages."
     packages=""
-    for package in $(docker run -i --rm ${container} spack find --format "{name}@{version}" | uniq); do 
+    for package in $(docker run -i --entrypoint spack --rm ${container} spack find --format "{name}@{version}" | uniq); do 
        packages="$packages,$package"
     done
 
@@ -98,7 +108,7 @@ fi
 
 # Get compilers in image
 compilers=""
-for compiler in $(spack find --format "{compiler}" | uniq); do 
+for compiler in $(docker run -i --entrypoint spack --rm ${container} spack find --format "{compiler}" | uniq); do 
    compilers="$compilers,$compiler"
 done
 
@@ -111,8 +121,16 @@ printf "Adding labels:\n ${labels}"
 echo "FROM ${container}" > Dockerfile.labeled
 docker build -t ${container} -f Dockerfile.labeled ${labels} .
 
+# Default to name package the same as GitHub repository
+PACKAGE_NAME=${GITHUB_REPOSITORY}
+
+# And if we have a package name, add it
+if [ ! -z "${INPUT_PACKAGE_NAME}" ]; then
+    PACKAGE_NAME=${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}
+fi
+
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
-    docker tag ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
+    docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}:${INPUT_TAG}
 fi
 
 docker images | grep ghcr.io

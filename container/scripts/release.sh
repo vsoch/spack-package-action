@@ -9,9 +9,17 @@ set -e
 # Login to GitHub packages
 echo ${GITHUB_TOKEN} | docker login -u ${GITHUB_ACTOR} --password-stdin ghcr.io
 
-# Push for all container tags
-docker push --all-tags ghcr.io/${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}
+# Default to name package the same as GitHub repository
+PACKAGE_NAME=${GITHUB_REPOSITORY}
 
-echo "::set-output name=container::${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}"
+# And if we have a package name, add it
+if [ ! -z "${INPUT_PACKAGE_NAME}" ]; then
+    PACKAGE_NAME=${GITHUB_REPOSITORY}/${INPUT_PACKAGE_NAME}
+fi
+
+# Push for all container tags
+docker push --all-tags ghcr.io/${PACKAGE_NAME}
+
+echo "::set-output name=container::${PACKAGE_NAME}"
 echo "::set-output name=tag::${INPUT_TAG}"
 echo "::set-output name=commit::${GITHUB_SHA}"
