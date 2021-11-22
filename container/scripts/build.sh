@@ -107,7 +107,8 @@ labels="${labels} --label org.opencontainers.image.description=${description}"
 
 printf "Adding labels:\n ${labels}"
 echo "FROM ${container}" > Dockerfile.labeled
-docker build ${labels} -t ${container} -f Dockerfile.labeled .
+printf "docker build -f Dockerfile.labeled ${labels} -t ${container} ."
+docker build -f Dockerfile.labeled ${labels} -t ${container} .
 
 if [[ "${GITHUB_SHA}" != "${INPUT_TAG}" ]]; then
     docker tag ghcr.io/${PACKAGE_NAME}:${SHA} ghcr.io/${PACKAGE_NAME}:${INPUT_TAG}
