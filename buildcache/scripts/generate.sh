@@ -2,8 +2,12 @@
 
 set -e
 
+printf "repo: ${GITHUB_REPO}\n"
+printf "branch: ${GITHUB_BRANCH}\n"
+printf "default repo: ${GITHUB_REPOSITORY}\n"
+
 # If the github repo is set, use GITHUB_REPOSITORY
-if [ -z "${INPUT_REPO+x}" ]; then
+if [ -z "${INPUT_REPO}" ]; then
     INPUT_REPO="${GITHUB_REPOSITORY}"
 fi
 
@@ -11,7 +15,7 @@ printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
 
 
 # Clone a branch is asked for, otherwise default to main
-if [ -z "${INPUT_REPO+x}" ]; then
+if [ -z "${INPUT_BRANCH}" ]; then
     git clone https://github.com/${INPUT_REPO}.git /tmp/repo
 else
     git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git /tmp/repo
