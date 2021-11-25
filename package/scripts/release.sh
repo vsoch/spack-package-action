@@ -48,6 +48,11 @@ echo "::set-output name=package_tagged_name::${package_tagged_name}"
 echo "::set-output name=package_content_type::${package_content_type}"
 echo "::set-output name=package_tag::${INPUT_TAG}"
 
+echo "package_name=${package_full_name}" >> $GITHUB_ENV
+echo "package_tagged_name=${package_tagged_name}" >> $GITHUB_ENV
+echo "package_content_type=${package_content_type}" >> $GITHUB_ENV
+echo "package_tag=${package_tag}" >> $GITHUB_ENV
+
 printf "oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
 
 # Push for latest

@@ -114,6 +114,6 @@ spec_json=$(find ${build_cache} -name *.json)
 cat ${spec_json}
 
 echo "spec=${spec}" >> $GITHUB_ENV
-echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
-echo "build_cache=${build_cache}" >> $GITHUB_ENV
 echo "spec_json=${spec_json}" >> $GITHUB_ENV
+echo "build_cache=${build_cache}" >> $GITHUB_ENV
+echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
