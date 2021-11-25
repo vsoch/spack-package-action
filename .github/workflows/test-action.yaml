@@ -35,7 +35,7 @@ jobs:
         uses: ./buildcache
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          deploy: ${{ github.event_name != 'pull_request' }}
+          deploy: false
           
   build-container-spack-yaml:
     runs-on: ubuntu-latest

@@ -176,6 +176,20 @@ See the [.github/workflows](.github/workflows) for full examples.
 
 You can specify a `spack_yaml` OR a `package` but not both, and the same for `release` and `branch`. 
 
+## Build Cache Website
+
+After you deploy to spack packages, you can create a web interface (that will also serve metadata to spack)
+along with an easy UI to explore packages. This action is modular but *does* require using the packages action
+previously for variables set in the environment. Your workflow might look like this:
+
+```yaml
+```
+
+
+### Variables
+
+
+
 ## Common
 
 For the package builds (binary or container) the recommended approach will be to build on changes to the codebase (given a codebase here) and release on

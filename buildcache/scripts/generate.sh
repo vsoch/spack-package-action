@@ -13,8 +13,8 @@ if [ -z "${package_name}" ]; then
     exit 1
 fi
 
-if [ -z "${package_tagged}" ]; then
-    printf "Envar package_tagged is required.\n"
+if [ -z "${package_tagged_name}" ]; then
+    printf "Envar package_tagged_name is required.\n"
     exit 1
 fi
 
@@ -98,7 +98,7 @@ tags: [spack-package, "latest", "${package_tag}"]
 json: ${spec_json_name}
 content_type: "${content_type}"
 package: ${full_package_name}
-tagged: ${package_tagged}
+tagged: ${package_tagged_name}
 updated_at: ${updated_at}
 package_page: https://github.com/${GITHUB_REPOSITORY}/pkgs/container/${repository}/${package_name}
 maths: 1

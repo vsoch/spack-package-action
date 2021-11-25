@@ -53,7 +53,7 @@ echo "::set-output name=package_tag::${INPUT_TAG}"
 echo "package_name=${package_full_name}" >> $GITHUB_ENV
 echo "package_tagged_name=${package_tagged_name}" >> $GITHUB_ENV
 echo "package_content_type=${package_content_type}" >> $GITHUB_ENV
-echo "package_tag=${package_tag}" >> $GITHUB_ENV
+echo "package_tag=${INPUT_TAG}" >> $GITHUB_ENV
 
 # Push for latest
 if [ "${DEPLOY}" == "true" ]; then
