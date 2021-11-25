@@ -67,7 +67,7 @@ runs:
     - name: Deploy
       env:
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
-        GITHUB_REPOSITORY: ${ github.repository }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_TOKEN: ${{ inputs.token }}
         INPUT_DEPLOY: ${{ inputs.deploy }}
         INPUT_BRANCH: ${{ inputs.branch }}
