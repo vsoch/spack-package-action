@@ -35,21 +35,29 @@ inputs:
 outputs:
   package_name:
     description: "package name uploaded to"
+    value: ${{ steps.release.outputs.package_name }}
   package_tagged_name:
     description: "package name with custom tag uploaded to"
+    value: ${{ steps.release.outputs.package_name }}
   package_tag:
     description: "package tag (along with latest)"
+    value: ${{ steps.release.outputs.package_tag }}
   package_content_type:
     description: "the package content type"
+    value: ${{ steps.release.outputs.content_type }}
   spec_json:
     description: "json file in the cache to describe the entry."
+    value: ${{ steps.build.outputs.spec_json }}
   build_cache:
     description: "Build cache path (dated YY.MM)"
+    value: ${{ steps.build.outputs.build_cache }}
   build_cache_prefix:
     description: Prefix of spack build cache (directory above build_cache)
+    value: ${{ steps.build.outputs.build_cache_prefix }}
   spec:
     description: "Spec used for build"
-    
+    value: ${{ steps.build.outputs.spec }}
+
 runs:
   using: "composite"
   steps:
@@ -79,6 +87,7 @@ runs:
 
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
+      id: release
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}

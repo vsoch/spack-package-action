@@ -33,12 +33,12 @@ jobs:
       - name: Test Updating Build Cache
         uses: ./buildcache
         with:
-          package_name: ${{ env.package_name }}
-          package_tagged_name: ${{ env.package_tagged_name }}
-          package_content_type: ${{ env.package_content_type }}
-          package_tag: ${{ env.package_tag }}
-          spec_json: ${{ env.spec_json }}
-          cache_prefix: ${{ env.build_cache_prefix }}
+          package_name: ${{ steps.package.outputs.package_name }}
+          package_tagged_name: ${{ steps.package.outputs.package_tagged_name }}
+          package_content_type: ${{ steps.package.outputs.package_content_type }}
+          package_tag: ${{ steps.package.outputs.package_tag }}
+          spec_json: ${{ steps.package.outputs.spec_json }}
+          cache_prefix: ${{ steps.package.outputs.build_cache_prefix }}
           token: ${{ secrets.GITHUB_TOKEN }}
           deploy: ${{ github.event_name != 'pull_request' }}
           

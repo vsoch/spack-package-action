@@ -1,6 +1,3 @@
-baseurl: "/spack-packages-action"
-repository: vsoch/spack-package-action
-
 title: Spack Build Cache
 description: A GitHub-based build cache for spack, with a nice UI to boot.
 url: ""
