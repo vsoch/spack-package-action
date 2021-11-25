@@ -23,8 +23,8 @@ if [ -z "${package_tag}" ]; then
     exit 1
 fi
 
-if [ -z "${content_type}" ]; then
-    printf "Envar content_type is required.\n"
+if [ -z "${package_content_type}" ]; then
+    printf "Envar package_content_type is required.\n"
     exit 1
 fi
 
@@ -43,7 +43,7 @@ printf "default repo: ${GITHUB_REPOSITORY}\n"
 printf "spec_json: ${spec_json}\n"
 printf "package: ${package_name}\n"
 printf "tagged: ${package_tagged}\n"
-printf "content type: ${content_type}\n"
+printf "content type: ${package_content_type}\n"
 
 # If the github repo is set, use GITHUB_REPOSITORY
 if [ -z "${INPUT_REPO}" ]; then
@@ -96,7 +96,7 @@ title: ${package_name}
 categories: spack-package
 tags: [spack-package, "latest", "${package_tag}"]
 json: ${spec_json_name}
-content_type: "${content_type}"
+content_type: "${package_content_type}"
 package: ${full_package_name}
 tagged: ${package_tagged_name}
 updated_at: ${updated_at}

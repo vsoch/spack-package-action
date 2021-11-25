@@ -180,7 +180,8 @@ You can specify a `spack_yaml` OR a `package` but not both, and the same for `re
 
 After you deploy to spack packages, you can create a web interface (that will also serve metadata to spack)
 along with an easy UI to explore packages. This action is modular but *does* require using the packages action
-previously for variables set in the environment. Your workflow might look like this:
+previously for variables set in the environment, and there are inputs that you can also customize for other variables.
+Your workflow might look like this:
 
 ```yaml
 ```
