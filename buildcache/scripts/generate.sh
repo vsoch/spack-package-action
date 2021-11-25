@@ -76,6 +76,10 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
    sed -i "1irepository: ${INPUT_REPO}" ${INPUT_SUBFOLDER}/_config.yml
    sed -i "1ibaseurl: /${repository_name}" ${INPUT_SUBFOLDER}/_config.yml
    cat ${INPUT_SUBFOLDER}/_config.yml
+
+   # Copy the key into the root of the cache
+   cp ${ACTION_PATH}/4A424030614ADE118389C2FD27BDB3E5F0331921.pub ${INPUT_SUBFOLDER}/_cache/4A424030614ADE118389C2FD27BDB3E5F0331921.pub
+   sed -i "1isigning_key: 4A424030614ADE118389C2FD27BDB3E5F0331921.pub" ${INPUT_SUBFOLDER}/_config.yml
 fi
 
 # Remove .spack to get general name
