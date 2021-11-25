@@ -2,9 +2,14 @@
 
 set -e
 
-printf "repo: ${GITHUB_REPO}\n"
+printf "repo: ${INPUT_REPO}\n"
+printf "subfolder: ${INPUT_SUBFOLDER}\n"
 printf "branch: ${GITHUB_BRANCH}\n"
 printf "default repo: ${GITHUB_REPOSITORY}\n"
+printf "spec_json: ${INPUT_SPEC_JSON}\n"
+printf "package: ${INPUT_PACKAGE_NAME}\n"
+printf "tagged: ${INPUT_PACKAGE_TAGGED_NAME}\n"
+printf "content type: ${INPUT_CONTENT_TYPE}\n"
 
 # If the github repo is set, use GITHUB_REPOSITORY
 if [ -z "${INPUT_REPO}" ]; then
@@ -23,10 +28,9 @@ fi
 
 # Clone GitHub pages branch with site
 cd /tmp/repo
-ls .
 
 # Repository name
-repository_name=$(basename ${GITHUB_REPOSITORY})
+repository_name=$(basename ${INPUT_REPO})
 
 # If no input subfolder exists, create with new site content
 if [ ! -d "${INPUT_SUBFOLDER}" ]; then
@@ -35,9 +39,9 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
    cp -R ${ACTION_PATH}/docs "${INPUT_SUBFOLDER}"
 
    # Ensure repository and baseurl at top of _config
-   sed -i '1s/^/repository: ${GITHUB_REPOSITORY} /' ${INPUT_SUBFOLDER}/_config.yaml
-   sed -i '1s/^/baseurl: /${repository_name} /' ${INPUT_SUBFOLDER}/_config.yaml
-   cat _config.yaml
+   sed -i '1s/^/repository: ${INPUT_REPO} /' ${INPUT_SUBFOLDER}/_config.yml
+   sed -i '1s/^/baseurl: /${repository_name} /' ${INPUT_SUBFOLDER}/_config.yml
+   cat _config.yml
 fi
 
 # Remove .spack to get general name
