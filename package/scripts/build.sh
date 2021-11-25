@@ -103,7 +103,9 @@ tree ${build_cache}
 
 # Set output for spec, and TODO binary to upload/save for next step
 echo "::set-output name=spec::${SPACK_SPEC}"
+echo "::set-output name=spec_json::${spec_json}"
 echo "::set-output name=build_cache::${build_cache}"
+echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 
 # We want to save the .json for any following step :)
 spec_json=$(find ${build_cache} -name *.json)
