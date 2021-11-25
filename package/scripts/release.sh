@@ -5,6 +5,8 @@ set -e
 echo $PWD
 ls 
 
+printf "build cache prefix: ${BUILD_CACHE_PREFIX}"
+printf "build cache: ${BUILD_CACHE}"
 printf "package: ${INPUT_PACKAGE_NAME}\n"
 printf "actor: ${GITHUB_ACTOR}\n"
 printf "tag: ${INPUT_TAG}\n"
@@ -23,13 +25,6 @@ rm -rf oras_0.12.0_*.tar.gz oras-install/
 # Login to GitHub packages
 echo ${GITHUB_TOKEN} | oras login -u ${GITHUB_ACTOR} --password-stdin ghcr.io
 
-# Compress entire build build cache
-printf "Creating .tar.gz of spack build cache to upload\n"
-
-# Upload relative to cache directory root so structure is predictible
-cd ${BUILD_CACHE}
-tar -czvf spack-package.tar.gz build_cache
-
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
     INPUT_TAG=${GITHUB_SHA:0:8}
@@ -38,13 +33,14 @@ fi
 # The package name must include the package and hash, etc.
 # linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spack
 spack_package=$(find ${BUILD_CACHE} -name *.spack)
-spack_package=$(basename $spack_package)
+spack_package_name=$(basename $spack_package)
+package_name="${build_cache_prefix}/${spack_package_name}"
 
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
 
 # Push for latest
-oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
 
 # And custom tag (which will default to GITHUB_SHA)
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
-oras push ghcr.io/${GITHUB_REPOSITORY}/${spack_package}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
