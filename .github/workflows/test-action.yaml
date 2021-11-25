@@ -28,8 +28,7 @@ jobs:
         with:
           package: zlib
           token: ${{ secrets.GITHUB_TOKEN }}
-          deploy: true
-          #deploy: ${{ github.event_name != 'pull_request' }}
+          deploy: ${{ github.event_name != 'pull_request' }}
           
   build-container-spack-yaml:
     runs-on: ubuntu-latest
