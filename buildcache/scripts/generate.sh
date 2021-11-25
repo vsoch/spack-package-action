@@ -41,7 +41,7 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
    # Ensure repository and baseurl at top of _config
    sed -i '1irepository: ${INPUT_REPO}' ${INPUT_SUBFOLDER}/_config.yml
    sed -i '1ibaseurl: ${repository_name}' ${INPUT_SUBFOLDER}/_config.yml
-   cat _config.yml
+   cat ${INPUT_SUBFOLDER}/_config.yml
 fi
 
 # Remove .spack to get general name
