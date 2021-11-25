@@ -28,8 +28,8 @@ if [ -z "${package_content_type}" ]; then
     exit 1
 fi
 
-if [ -z "${cache_prefix}" ]; then
-    printf "Envar cache_prefix is required.\n"
+if [ -z "${build_cache_prefix}" ]; then
+    printf "Envar build_cache_prefix is required.\n"
     exit 1
 fi
 
@@ -82,7 +82,7 @@ fi
 package_name=$(basename ${package_name%.spack})
 
 # We will write the package template
-markdown_result=${INPUT_SUBFOLDER}/_cache/${cache_prefix}/build_cache/${package_name}.md
+markdown_result=${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/build_cache/${package_name}.md
 repository=$(basename ${GITHUB_REPOSITORY})
 spec_json_name=$(basename ${spec_json})
 
@@ -111,7 +111,7 @@ printf "Markdown file generated was ${markdown_result}\n"
 cat ${markdown_result}
 
 # Copy the spec_json there
-mv ${spec_json} ${INPUT_SUBFOLDER}/_cache/${cache_prefix}/build_cache/${spec_json_name}
+mv ${spec_json} ${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/build_cache/${spec_json_name}
 
 tree ${INPUT_SUBFOLDER}/_cache
 git status
