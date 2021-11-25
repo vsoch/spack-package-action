@@ -87,18 +87,33 @@ else
     exit 1
 fi
 
-# After install, create and add to build cache
-mkdir -p /opt/spack-cache
+# After install, create and add to build cache.
+# We want the directory to be the YEAR.MONTH (21.05)
+month=$(date '+%y.%m')
+build_cache=/opt/${month}
+mkdir -p $build_cache
+
+# TODO we will want to have this be a consistent key (not generate newly every time)
 spack gpg init
 spack gpg create "${GITHUB_ACTOR}" "${GITHUB_ACTOR}@users.noreply.github.com"
-spack buildcache create -d /opt/spack-cache ${SPACK_SPEC}
+spack buildcache create -d ${build_cache} ${SPACK_SPEC}
 
 # Did we make stuff?
-tree /opt/spack-cache
+tree ${build_cache}
 
 # Set output for spec, and TODO binary to upload/save for next step
 echo "::set-output name=spec::${SPACK_SPEC}"
-echo "::set-output name=build_cache::/opt/spack-cache"
+echo "::set-output name=spec_json::${spec_json}"
+echo "::set-output name=build_cache::${build_cache}"
+echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
+
+# We want to save the .json for any following step :)
+spec_json=$(find ${build_cache} -name *.json)
+
+# Show the spec
+cat ${spec_json}
 
 echo "spec=${spec}" >> $GITHUB_ENV
-echo "build_cache=/opt/spack-cache" >> $GITHUB_ENV
+echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
+echo "build_cache=${build_cache}" >> $GITHUB_ENV
+echo "spec_json=${spec_json}" >> $GITHUB_ENV

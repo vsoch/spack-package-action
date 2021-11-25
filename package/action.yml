@@ -33,6 +33,12 @@ inputs:
     default: false
 
 outputs:
+  spec_json:
+    description: "json file in the cache to describe the entry."
+  build_cache:
+    description: "Build cache path (dated YY.MM)"
+  build_cache_prefix:
+    description: Prefix of spack build cache (directory above build_cache)
   spec:
     description: "Spec used for build"
     
@@ -70,6 +76,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_ACTOR: ${{ github.actor }}
         INPUT_TAG: ${{ inputs.tag }}
+        BUILD_CACHE_PREFIX: ${{ env.build_cache_prefix }}
         BUILD_CACHE: ${{ env.build_cache }}
         SPACK_ROOT: /opt/spack
       run: ${{ github.action_path }}/scripts/release.sh

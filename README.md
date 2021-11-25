@@ -98,34 +98,19 @@ This action is provided in [package](package), and an example package is shown
 To then get the binary, you can [install oras](https://oras.land/cli/) and do:
 
 ```bash
-$ oras pull ghcr.io/vsoch/spack-package-action/linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spack:d115bcc4
-Downloaded 5ee1f2ed8b80 spack-package.tar.gz
-Pulled ghcr.io/vsoch/spack-package-action/linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spack:d115bcc4
-Digest: sha256:102901abeb89676e466184df1a87a23916febb465f688e5f4c12174263b98f9b
+$ oras pull ghcr.io/vsoch/spack-package-action/21.11/build_cache/linux-ubuntu20.04-x86_64_v4-gcc-10.3.0-zlib-1.2.11-2bkp3o6gfeilpf4o7d2h7xcujnupytlt.spack:07f0a453
+Downloaded b287cffe632d linux-ubuntu20.04-x86_64_v4-gcc-10.3.0-zlib-1.2.11-2bkp3o6gfeilpf4o7d2h7xcujnupytlt.spack
+Pulled ghcr.io/vsoch/spack-package-action/21.11/build_cache/linux-ubuntu20.04-x86_64_v4-gcc-10.3.0-zlib-1.2.11-2bkp3o6gfeilpf4o7d2h7xcujnupytlt.spack:07f0a453
+Digest: sha256:296655195f73756b60218b342ab9850d6931a85fc66955283763f8f11a5f81ee
 ```
 What did we pull?
 
 ```bash
-$ ls
-container  install  opt  package  README.md  spack  spack-package.tar.gz
+linux-ubuntu20.04-x86_64_v4-gcc-10.3.0-zlib-1.2.11-2bkp3o6gfeilpf4o7d2h7xcujnupytlt.spack 
 ```
 
-Let's look inside!
-
-```bash
-$ tar -xzvf spack-package.tar.gz 
-build_cache/
-build_cache/linux-ubuntu20.04-broadwell/
-build_cache/linux-ubuntu20.04-broadwell/gcc-10.3.0/
-build_cache/linux-ubuntu20.04-broadwell/gcc-10.3.0/zlib-1.2.11/
-build_cache/linux-ubuntu20.04-broadwell/gcc-10.3.0/zlib-1.2.11/linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spack
-build_cache/linux-ubuntu20.04-broadwell-gcc-10.3.0-zlib-1.2.11-5vlodp7yawk5elx4dfhnpzmpg743fwv3.spec.json
-build_cache/_pgp/
-build_cache/_pgp/03335A5FDBD232812567D91E07AA94F305E9B077.pub
-```
-
-In summary, the oras package, after pull, means "spack-package.tar.gz" will then be in the present working directory, which has the contents
-of a build cache with one package. See [questions](#questions-for-discussion) for some things to talk about!
+In summary, the oras package, after pull will then produce the .spack artifact in the present working directory.
+See [questions](#questions-for-discussion) for some things to talk about!
 For example, we could easily add this to spack proper as a *much* easier to use build cache than say, needing
 to pay all the monies for AWS and get lost in the interface of bouncy doom.
 
