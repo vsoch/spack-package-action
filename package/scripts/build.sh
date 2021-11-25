@@ -96,7 +96,7 @@ mkdir -p $build_cache
 # TODO we will want to have this be a consistent key (not generate newly every time)
 spack gpg init
 spack gpg create "${GITHUB_ACTOR}" "${GITHUB_ACTOR}@users.noreply.github.com"
-spack buildcache create -d ${build_cache} ${SPACK_SPEC}
+spack buildcache create -r -a -d ${build_cache} ${SPACK_SPEC}
 
 # Did we make stuff?
 tree ${build_cache}
