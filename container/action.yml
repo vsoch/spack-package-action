@@ -30,11 +30,14 @@ inputs:
 outputs:
   container:
     description: "Container unique resource identifier (sans tag)"
+    value: ${{ steps.release.outputs.container }}
   tag:
     description: "Container custom tag"
+    value: ${{ steps.release.outputs.tag }}
   commit:
     description: "Container commit (also a tag)"
-    
+    value: ${{ steps.release.outputs.commit }}
+
 runs:
   using: "composite"
   steps:
@@ -66,6 +69,7 @@ runs:
 
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
+      id: release
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
