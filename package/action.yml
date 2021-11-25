@@ -33,6 +33,14 @@ inputs:
     default: false
 
 outputs:
+  package_name:
+    description: "package name uploaded to"
+  package_tagged_name:
+    description: "package name with custom tag uploaded to"
+  package_tag:
+    description: "package tag (along with latest)"
+  package_content_type:
+    description: "the package content type"
   spec_json:
     description: "json file in the cache to describe the entry."
   build_cache:

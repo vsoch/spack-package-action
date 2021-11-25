@@ -39,11 +39,20 @@ package_name="${build_cache_prefix}/${spack_package_name}"
 # Absolute paths not allowed
 mv ${spack_package} ${spack_package_name}
 
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ${spack_package_name}\n"
+package_full_name=ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest
+package_tagged_name=ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG}
+package_content_type=application/vnd.spack.package
+
+echo "::set-output name=package_name::${package_full_name}"
+echo "::set-output name=package_tagged_name::${package_tagged_name}"
+echo "::set-output name=package_content_type::${package_content_type}"
+echo "::set-output name=package_tag::${INPUT_TAG}"
+
+printf "oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
 
 # Push for latest
-oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ${spack_package_name}
+oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
 
 # And custom tag (which will default to GITHUB_SHA)
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ${spack_package_name}\n"
-oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ${spack_package_name}
+printf "oras push ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
+oras push  ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
