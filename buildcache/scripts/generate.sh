@@ -2,14 +2,48 @@
 
 set -e
 
+# These envars are required!
+if [ -z "${spec_json}" ]; then
+    printf "Envar spec_json is required.\n"
+    exit 1
+fi
+
+if [ -z "${package_name}" ]; then
+    printf "Envar package_name is required.\n"
+    exit 1
+fi
+
+if [ -z "${package_tagged}" ]; then
+    printf "Envar package_tagged is required.\n"
+    exit 1
+fi
+
+if [ -z "${package_tag}" ]; then
+    printf "Envar package_tag is required.\n"
+    exit 1
+fi
+
+if [ -z "${content_type}" ]; then
+    printf "Envar content_type is required.\n"
+    exit 1
+fi
+
+if [ -z "${cache_prefix}" ]; then
+    printf "Envar cache_prefix is required.\n"
+    exit 1
+fi
+
+# Keep full name for later
+full_package_name=${package_name}
+
 printf "repo: ${INPUT_REPO}\n"
 printf "subfolder: ${INPUT_SUBFOLDER}\n"
 printf "branch: ${GITHUB_BRANCH}\n"
 printf "default repo: ${GITHUB_REPOSITORY}\n"
-printf "spec_json: ${INPUT_SPEC_JSON}\n"
-printf "package: ${INPUT_PACKAGE_NAME}\n"
-printf "tagged: ${INPUT_PACKAGE_TAGGED_NAME}\n"
-printf "content type: ${INPUT_CONTENT_TYPE}\n"
+printf "spec_json: ${spec_json}\n"
+printf "package: ${package_name}\n"
+printf "tagged: ${package_tagged}\n"
+printf "content type: ${content_type}\n"
 
 # If the github repo is set, use GITHUB_REPOSITORY
 if [ -z "${INPUT_REPO}" ]; then
@@ -45,12 +79,12 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
 fi
 
 # Remove .spack to get general name
-package_name=$(basename ${INPUT_PACKAGE_NAME%.spack})
+package_name=$(basename ${package_name%.spack})
 
 # We will write the package template
-markdown_result=${INPUT_SUBFOLDER}/_cache/${INPUT_CACHE_PREFIX}/build_cache/${package_name}.md
+markdown_result=${INPUT_SUBFOLDER}/_cache/${cache_prefix}/build_cache/${package_name}.md
 repository=$(basename ${GITHUB_REPOSITORY})
-spec_json_name=$(basename ${INPUT_SPEC_JSON})
+spec_json_name=$(basename ${spec_json})
 
 # Date updated
 updated_at=$(date '+%Y-%m-%d')
@@ -60,11 +94,11 @@ cat > ${markdown_result} <<EOL
 ---
 title: ${package_name}
 categories: spack-package
-tags: [spack-package, "latest", "${INPUT_PACKAGE_TAG}"]
+tags: [spack-package, "latest", "${package_tag}"]
 json: ${spec_json_name}
-content_type: "${INPUT_CONTENT_TYPE}"
-package: ${INPUT_PACKAGE_NAME}
-tagged: ${INPUT_PACKAGE_TAGGED_NAME}
+content_type: "${content_type}"
+package: ${full_package_name}
+tagged: ${package_tagged}
 updated_at: ${updated_at}
 package_page: https://github.com/${GITHUB_REPOSITORY}/pkgs/container/${repository}/${package_name}
 maths: 1
@@ -77,7 +111,7 @@ printf "Markdown file generated was ${markdown_result}\n"
 cat ${markdown_result}
 
 # Copy the spec_json there
-mv ${INPUT_SPEC_JSON} ${INPUT_SUBFOLDER}/_cache/${INPUT_CACHE_PREFIX}/build_cache/${spec_json_name}
+mv ${spec_json} ${INPUT_SUBFOLDER}/_cache/${cache_prefix}/build_cache/${spec_json_name}
 
 tree ${INPUT_SUBFOLDER}/_cache
 git status

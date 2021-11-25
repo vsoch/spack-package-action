@@ -86,7 +86,6 @@ runs:
       shell: bash
 
     - name: Package Release
-      if: ${{ inputs.deploy == 'true' }}
       id: release
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
@@ -96,5 +95,6 @@ runs:
         BUILD_CACHE_PREFIX: ${{ env.build_cache_prefix }}
         BUILD_CACHE: ${{ env.build_cache }}
         SPACK_ROOT: /opt/spack
+        DEPLOY: ${{ inputs.deploy }}
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash

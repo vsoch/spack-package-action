@@ -10,7 +10,7 @@ printf "build cache: ${BUILD_CACHE}"
 printf "package: ${INPUT_PACKAGE_NAME}\n"
 printf "actor: ${GITHUB_ACTOR}\n"
 printf "tag: ${INPUT_TAG}\n"
-
+printf "deploy: ${DEPLOY}\n"
 
 # Setup the spack environment
 . "${SPACK_ROOT}/share/spack/setup-env.sh"
@@ -23,7 +23,9 @@ mv oras-install/oras /usr/local/bin/
 rm -rf oras_0.12.0_*.tar.gz oras-install/
 
 # Login to GitHub packages
-echo ${GITHUB_TOKEN} | oras login -u ${GITHUB_ACTOR} --password-stdin ghcr.io
+if [ "${DEPLOY}" == "true" ]; then
+    echo ${GITHUB_TOKEN} | oras login -u ${GITHUB_ACTOR} --password-stdin ghcr.io
+fi
 
 # Do we have a tag?
 if [ -z "${INPUT_TAG}" ]; then
@@ -53,11 +55,12 @@ echo "package_tagged_name=${package_tagged_name}" >> $GITHUB_ENV
 echo "package_content_type=${package_content_type}" >> $GITHUB_ENV
 echo "package_tag=${package_tag}" >> $GITHUB_ENV
 
-printf "oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
-
 # Push for latest
-oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
+if [ "${DEPLOY}" == "true" ]; then
+    printf "oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
+    oras push ${package_full_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
 
-# And custom tag (which will default to GITHUB_SHA)
-printf "oras push ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
-oras push  ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
+    # And custom tag (which will default to GITHUB_SHA)
+    printf "oras push ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}\n"
+    oras push  ${package_tagged_name} --manifest-config /dev/null:${package_content_type} ${spack_package_name}
+fi

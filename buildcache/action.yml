@@ -1,21 +1,6 @@
 name: 'Spack Build Cache Action'
 description: "Upload a newly generated .json file (corresponding to a package binary) to GitHub Pages spack build cache"
 inputs:
-  spec_json:
-    description: full path to spec json file to upload
-    required: true
-  package_name:
-    description: package name
-    required: true
-  package_tagged_name:
-    description: package tagged name
-    required: true
-  package_content_type:
-    description: package content type
-    required: true
-  package_tag:
-    description: package tags
-    required: true
   repo:
     description: The repository to upload to (defaults to same as running action)
     required: false
@@ -48,7 +33,6 @@ runs:
     - name: Generate Spec Metadata
       id: generator
       env:
-        INPUT_SPEC_JSON: ${{ inputs.spec_json }}
         INPUT_REPO: ${{ inputs.repo }}
         GITHUB_REPOSITORY: ${{ github.repository }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
@@ -56,10 +40,6 @@ runs:
         INPUT_CACHE_PREFIX: ${{ inputs.cache_prefix }}
         GITHUB_TOKEN: ${{ inputs.token }}
         ACTION_PATH: ${{ github.action_path }}
-        INPUT_PACKAGE_NAME: ${{ inputs.package_name }}
-        INPUT_PACKAGE_TAGGED_NAME: ${{ inputs.package_tagged_name }}
-        INPUT_CONTENT_TYPE: ${{ inputs.package_content_type }}
-        INPUT_PACKAGE_TAG: ${{ inputs.package_tag }}
 
       run: ${{ github.action_path }}/scripts/generate.sh
       shell: bash
