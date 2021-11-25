@@ -110,6 +110,9 @@ echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 # We want to save the .json for any following step :)
 spec_json=$(find ${build_cache} -name *.json)
 
+# Show the spec
+cat ${spec_json}
+
 echo "spec=${spec}" >> $GITHUB_ENV
 echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV
