@@ -36,11 +36,11 @@ spack_package=$(find ${BUILD_CACHE} -name *.spack)
 spack_package_name=$(basename $spack_package)
 package_name="${build_cache_prefix}/${spack_package_name}"
 
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ${spack_package}\n"
 
 # Push for latest
-oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:latest --manifest-config /dev/null:application/vnd.spack.package ${spack_package}
 
 # And custom tag (which will default to GITHUB_SHA)
-printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz\n"
-oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ./spack-package.tar.gz
+printf "oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ${spack_package}\n"
+oras push ghcr.io/${GITHUB_REPOSITORY}/${package_name}:${INPUT_TAG} --manifest-config /dev/null:application/vnd.spack.package ${spack_package}
