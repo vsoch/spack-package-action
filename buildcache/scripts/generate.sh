@@ -10,7 +10,6 @@ fi
 printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
 
 
-
 # Clone a branch is asked for, otherwise default to main
 if [ -z "${INPUT_REPO+x}" ]; then
     git clone https://github.com/${INPUT_REPO}.git /tmp/repo

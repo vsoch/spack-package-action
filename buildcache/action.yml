@@ -50,6 +50,7 @@ runs:
       env:
         INPUT_SPEC_JSON: ${{ inputs.spec_json }}
         INPUT_REPO: ${{ inputs.repo }}
+        GITHUB_REPOSITORY: ${ github.repository }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_CACHE_PREFIX: ${{ inputs.cache_prefix }}
@@ -66,6 +67,7 @@ runs:
     - name: Deploy
       env:
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
+        GITHUB_REPOSITORY: ${ github.repository }}
         GITHUB_TOKEN: ${{ inputs.token }}
         INPUT_DEPLOY: ${{ inputs.deploy }}
         INPUT_BRANCH: ${{ inputs.branch }}
