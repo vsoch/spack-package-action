@@ -93,9 +93,13 @@ month=$(date '+%y.%m')
 build_cache=/opt/${month}
 mkdir -p $build_cache
 
-# Add the key, stored with buildcache action
+# Add the key
+
+# Add the key, stored with buildcache action (we need to do both these things?)
 root=$(dirname ${ACTION_ROOT})
 spack gpg trust ${root}/buildcache/4A424030614ADE118389C2FD27BDB3E5F0331921.pub
+spack gpg init
+spack gpg create "${GITHUB_ACTOR}" "${GITHUB_ACTOR}@users.noreply.github.com"
 spack buildcache create -r -a -d ${build_cache} ${SPACK_SPEC}
 
 # Did we make stuff?
