@@ -14,6 +14,7 @@ cd ${INPUT_ROOT}
 printf "GitHub Actor: ${GITHUB_ACTOR}\n"
 git config --global user.name "github-actions"
 git config --global user.email "github-actions@users.noreply.github.com"
+git config pull.rebase true
 
 # We should already be in cloned repository and branch!
 ls .
