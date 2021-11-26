@@ -65,7 +65,7 @@ export SPACK_ADD_DEBUG_FLAGS=true
 printf "Installing spack...\n"
 
 # Make sure parent of root exists
-parent=$(dirname ${INPUT_SPACK_ROOT})
+parent=$(dirname ${SPACK_ROOT})
 if [ ! -d "${parent}" ]; then
     mkdir -p ${parent}
 fi
@@ -74,20 +74,21 @@ fi
 if [ "${INPUT_RELEASE}" != "" ]; then
     wget https://github.com/spack/spack/releases/download/v${INPUT_RELEASE}/spack-${INPUT_RELEASE}.tar.gz
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
-    mv spack-${INPUT_RELEASE} ${INPUT_SPACK_ROOT}
+    mv spack-${INPUT_RELEASE} ${SPACK_ROOT}
 
 # Branch install, either shallow or full clone
 else
+    printf "Cloning to ${SPACK_ROOT}\n"
     if [[ "${INPUT_FULL_CLONE}" == "false" ]]; then
-        git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_SPACK_ROOT}
+        git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     else
-        git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_SPACK_ROOT}
+        git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     fi
 fi
 
 # Find compilers
 # The user running the action should install additional compilers before
-cd ${INPUT_SPACK_ROOT}
+cd ${SPACK_ROOT}
 ls
 . share/spack/setup-env.sh
 spack compiler find
@@ -102,5 +103,5 @@ if [ ! -z "${INPUT_REPOS}" ]; then
         git clone $repo $clone_dir        
         spack repo add $clone_dir
     done
-    cd ${INPUT_SPACK_ROOT}
+    cd ${SPACK_ROOT}
 fi
