@@ -30,6 +30,6 @@ runs:
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
         INPUT_FULL_CLONE: ${{ inputs.full_clone }}
-        INPUT_SPACK_ROOT: ${{ inputs.root }}
+        INPUT_SPACK_ROOT: ${{ inputs.spack_root }}
       run: ${{ github.action_path }}/scripts/install.sh
       shell: bash
