@@ -42,7 +42,7 @@ echo "::set-output name=package_tag::${INPUT_TAG}"
 echo "package_tag=${INPUT_TAG}" >> $GITHUB_ENV
 
 # Keep lists of package names, tagged, names
-tagged_names""
+tagged_names=""
 package_names=""
 
 # The package name must include the package and hash, etc.
