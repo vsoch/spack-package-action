@@ -82,7 +82,9 @@ elif [ -d "${PACKAGE_PATH}" ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
     printf "Package name provided that does NOT exist and a custom package.py, will install custom package.\n"
     install_custom_package "${SPACK_SPEC}" "${PACKAGE_PATH}" "${INPUT_PACKAGE_PATH}"
 
-else
+else    
+    printf "package_custom_path: ${INPUT_PACKAGE_PATH}\n"
+    printf "package_path: ${PACKAGE_PATH}\n"
     printf "You must either provide a package name (package) OR a custom package path (package_path)\n"
     exit 1
 fi
