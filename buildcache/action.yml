@@ -4,6 +4,10 @@ inputs:
   repo:
     description: The repository to upload to (defaults to same as running action)
     required: false
+  root:
+    description: Root to clone to.
+    required: false
+    default: /tmp/root
   subfolder:
     description: The subfolder to generate the buildcache site (defaults to docs/)
     required: false
@@ -34,6 +38,7 @@ runs:
       id: generator
       env:
         INPUT_REPO: ${{ inputs.repo }}
+        INPUT_ROOT: ${{ inputs.root }}
         GITHUB_REPOSITORY: ${{ github.repository }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         INPUT_BRANCH: ${{ inputs.branch }}
@@ -46,6 +51,7 @@ runs:
 
     - name: Deploy
       env:
+        INPUT_ROOT: ${{ inputs.root }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_TOKEN: ${{ inputs.token }}

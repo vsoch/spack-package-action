@@ -9,7 +9,7 @@ if [ "${INPUT_DEPLOY}" != "true" ]; then
 fi
 
 # Go to where repository was cloned
-cd /tmp/repo
+cd ${INPUT_ROOT}
 
 printf "GitHub Actor: ${GITHUB_ACTOR}\n"
 git config --global user.name "github-actions"

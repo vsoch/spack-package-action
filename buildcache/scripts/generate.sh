@@ -37,6 +37,7 @@ fi
 full_package_name=${package_name}
 
 printf "repo: ${INPUT_REPO}\n"
+printf "clone root: ${INPUT_ROOT}\n"
 printf "subfolder: ${INPUT_SUBFOLDER}\n"
 printf "branch: ${GITHUB_BRANCH}\n"
 printf "default repo: ${GITHUB_REPOSITORY}\n"
@@ -55,13 +56,13 @@ printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
 
 # Clone a branch is asked for, otherwise default to main
 if [ -z "${INPUT_BRANCH}" ]; then
-    git clone https://github.com/${INPUT_REPO}.git /tmp/repo
+    git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
 else
-    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git /tmp/repo
+    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
 fi
 
 # Clone GitHub pages branch with site
-cd /tmp/repo
+cd ${INPUT_ROOT}
 
 # Repository name
 repository_name=$(basename ${INPUT_REPO})
