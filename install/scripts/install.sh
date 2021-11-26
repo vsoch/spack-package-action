@@ -77,6 +77,12 @@ if [ "${INPUT_RELEASE}" != "" ]; then
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
     mv spack-${INPUT_RELEASE} ${SPACK_ROOT}
 
+
+# If branch unset, default to develop
+if [ -z "${INPUT_BRANCH}" ]; then
+    INPUT_BRANCH="develop"
+fi
+
 # Branch install, either shallow or full clone
 else
     printf "Cloning to ${SPACK_ROOT}\n"
