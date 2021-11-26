@@ -11,14 +11,16 @@ fi
 # We should already be in cloned repository and branch!
 ls .
 
-printf "GitHub Actor: ${GITHUB_ACTOR}\n"
-git config --global user.name "github-actions"
-git config --global user.email "github-actions@users.noreply.github.com"
+git config --global user.name "${INPUT_USER}"
+git config --global user.email "${INPUT_USER}@users.noreply.github.com"
 git config pull.rebase true
 
-#git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+git remote set-url origin "https://x-access-token:${INPUT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 git add ${INPUT_SUBFOLDER}
+git add ${INPUT_SUBFOLDER}*
+git add ${INPUT_SUBFOLDER}//*
 git add ${INPUT_SUBFOLDER}/_cache
+git add ${INPUT_SUBFOLDER}//_cache/*
 git status
 
 set +e

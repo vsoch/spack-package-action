@@ -13,7 +13,10 @@ inputs:
     required: false
     default: main
   token:
-    description: A GitHub token to push to the same repository
+    description: A GitHub personal access token (repo scope) to push to the repository
+    required: true
+  user:
+    description: Username for token
     required: true
   deploy:
     description: Deploy to GitHub pages
@@ -43,8 +46,9 @@ runs:
       env:
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         GITHUB_REPOSITORY: ${{ github.repository }}
-        GITHUB_TOKEN: ${{ inputs.token }}
+        INPUT_TOKEN: ${{ inputs.token }}
         INPUT_DEPLOY: ${{ inputs.deploy }}
+        INPUT_USER: ${{ inputs.user }}
         INPUT_BRANCH: ${{ inputs.branch }}
       run: ${{ github.action_path }}/scripts/deploy.sh
       shell: bash

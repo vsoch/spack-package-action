@@ -186,6 +186,7 @@ Your workflow might look like this:
 ```yaml
 ```
 
+**Important** You MUST set the GitHub token to be present for the checkout step or you will get permission denied.
 
 ### Variables
 
