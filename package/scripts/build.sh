@@ -107,19 +107,26 @@ spack buildcache create -r -a -d ${build_cache} ${SPACK_SPEC}
 # Did we make stuff?
 tree ${build_cache}
 
-# We want to save the .json for any following step :)
-spec_json=$(find ${build_cache} -name *.json)
+# We want to save the .json files for any following step :)
+spec_jsons=""
 
-# Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::\"${SPACK_SPEC}\""
-echo "::set-output name=spec_json::${spec_json}"
 echo "::set-output name=build_cache::${build_cache}"
 echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 
-# Show the spec
-cat ${spec_json}
+# There can be more than one thing in the build cache
+for spec_json in $(find ${build_cache} -name *.json); do
+    printf "${spec_json}\n"
+    cat ${spec_json}
+    if [[ "${specs}" == "" ]]; then
+        spec_jsons=${spec_json}
+    else
+        spec_jsons="${spec_jsons},${spec_json}"
+done
 
+# Set output for spec, and TODO binary to upload/save for next step
+echo "::set-output name=spec::\"${SPACK_SPEC}\""
+echo "::set-output name=spec_jsons::${spec_jsons}"
 echo "spec=\"${SPACK_SPEC}\"" >> $GITHUB_ENV
-echo "spec_json=\"${spec_json}\"" >> $GITHUB_ENV
+echo "spec_jsons=\"${spec_jsons}\"" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV
 echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV

@@ -45,9 +45,9 @@ outputs:
   package_content_type:
     description: "the package content type"
     value: ${{ steps.release.outputs.content_type }}
-  spec_json:
-    description: "json file in the cache to describe the entry."
-    value: ${{ steps.build.outputs.spec_json }}
+  spec_jsons:
+    description: "comma separately list of json files in the cache to describe the entry."
+    value: ${{ steps.build.outputs.spec_jsons }}
   build_cache:
     description: "Build cache path (dated YY.MM)"
     value: ${{ steps.build.outputs.build_cache }}

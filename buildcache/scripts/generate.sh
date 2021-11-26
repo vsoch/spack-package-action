@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # These envars are required!
-if [ -z "${spec_json}" ]; then
-    printf "Envar spec_json is required.\n"
+if [ -z "${spec_jsons}" ]; then
+    printf "Envar spec_jsons is required.\n"
     exit 1
 fi
 
-if [ -z "${package_name}" ]; then
-    printf "Envar package_name is required.\n"
+if [ -z "${package_names}" ]; then
+    printf "Envar package_names is required.\n"
     exit 1
 fi
 
-if [ -z "${package_tagged_name}" ]; then
-    printf "Envar package_tagged_name is required.\n"
+if [ -z "${package_tagged_names}" ]; then
+    printf "Envar package_tagged_names is required.\n"
     exit 1
 fi
 
@@ -31,17 +31,14 @@ if [ -z "${build_cache_prefix}" ]; then
     exit 1
 fi
 
-# Keep full name for later
-full_package_name=${package_name}
-
 printf "repo: ${INPUT_REPO}\n"
 printf "clone root: ${INPUT_ROOT}\n"
 printf "subfolder: ${INPUT_SUBFOLDER}\n"
 printf "branch: ${GITHUB_BRANCH}\n"
 printf "default repo: ${GITHUB_REPOSITORY}\n"
-printf "spec_json: ${spec_json}\n"
-printf "package: ${package_name}\n"
-printf "tagged: ${package_tagged}\n"
+printf "spec_jsons: ${spec_jsons}\n"
+printf "package: ${package_names}\n"
+printf "tagged: ${package_tagged_names}\n"
 printf "content type: ${package_content_type}\n"
 
 # If the github repo is set, use GITHUB_REPOSITORY
@@ -89,26 +86,40 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
    sed -i "1isigning_key: 4A424030614ADE118389C2FD27BDB3E5F0331921.pub" ${INPUT_SUBFOLDER}/_config.yml
 fi
 
-# Remove .spack to get general name
-package_name=$(basename ${package_name%.spack})
-
-# We will write the package template
-markdown_result=${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/${package_name}.md
-repository=$(basename ${GITHUB_REPOSITORY})
-spec_json_name=$(basename ${spec_json})
-
 # Date updated
 updated_at=$(date '+%Y-%m-%d')
+s
+# Reach each of package_names, package_tagged_names, and spec_jsons into arrays
+IFS=',' read -r -a package_names <<< "$package_names"
+IFS=',' read -r -a package_tagged_names <<< "$package_tagged_names"
+IFS=',' read -r -a spec_jsons <<< "$spec_jsons"
+
+for i in "${!package_names[@]}"; do
+    package_name=${package_names[i]}
+    package_tagged_name=${package_tagged_names[i]}
+    spec_json=${spec_jsons[i]}
+    printf "Parsing spec package ${i}\n"
+    printf "package: ${package_name}\n"
+    printf "tagged package: ${package_tagged_name}\n"
+    printf "spec_json: ${spec_json}\n"
+
+    plain_package_name=$(basename ${package_name%.spack})
+
+    # We will write the package template
+    markdown_result=${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/${plain_package_name}.md
+    repository=$(basename ${GITHUB_REPOSITORY})
+
+    spec_json_name=$(basename ${spec_json})
 
 # Generate package page
 cat > ${markdown_result} <<EOL
 ---
-title: ${package_name}
+title: ${plain_package_name}
 categories: spack-package
 tags: [spack-package, "latest", "${package_tag}"]
 json: ${spec_json_name}
 content_type: "${package_content_type}"
-package: ${full_package_name}
+package: ${package_name}
 tagged: ${package_tagged_name}
 updated_at: ${updated_at}
 package_page: https://github.com/${GITHUB_REPOSITORY}/pkgs/container/${repository}/${package_name}
@@ -117,12 +128,12 @@ toc: 1
 ---
 EOL
 
+    printf "Markdown file generated was ${markdown_result}\n"
+    cat ${markdown_result}
 
-printf "Markdown file generated was ${markdown_result}\n"
-cat ${markdown_result}
-
-# Copy the spec_json there
-mv ${spec_json} ${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/${spec_json_name}
+    # Copy the spec_json there
+    mv ${spec_json} ${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/${spec_json_name}
+done
 
 tree ${INPUT_SUBFOLDER}/_cache
 git status
