@@ -80,7 +80,7 @@ for i in "${!package_names[@]}"; do
     plain_package_name=$(basename ${package_name%.spack})
 
     # We will write the package template
-    markdown_result=${INPUT_SUBFOLDER}/_cache/${build_cache_prefix}/${plain_package_name}.md
+    markdown_result=${INPUT_SUBFOLDER}_cache/${build_cache_prefix}/${plain_package_name}.md
     repository=$(basename ${GITHUB_REPOSITORY})
 
     spec_json_name=$(basename ${spec_json})
