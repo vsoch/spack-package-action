@@ -109,7 +109,7 @@ tree ${build_cache}
 spec_json=$(find ${build_cache} -name *.json)
 
 # Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::${SPACK_SPEC}"
+echo "::set-output name=spec::\"${SPACK_SPEC}\""
 echo "::set-output name=spec_json::${spec_json}"
 echo "::set-output name=build_cache::${build_cache}"
 echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
@@ -117,7 +117,7 @@ echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 # Show the spec
 cat ${spec_json}
 
-echo "spec=${SPACK_SPEC}" >> $GITHUB_ENV
+echo "spec=\"${SPACK_SPEC}\"" >> $GITHUB_ENV
 echo "spec_json=${spec_json}" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV
 echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
