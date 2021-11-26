@@ -12,6 +12,7 @@ printf "root: ${INPUT_SPACK_ROOT}\n"
 printf "Installing spack dependencies...\n"
 
 sudo apt update -q -y \
+  && sudo apt-get install -y git && \
   && sudo apt install -y -v \
       autoconf \
       automake \
@@ -25,7 +26,6 @@ sudo apt update -q -y \
       gcc \
       gettext \
       gfortran \ 
-      git \
       gpg \
       iputils-ping \
       jq \
@@ -67,6 +67,7 @@ printf "Installing spack...\n"
 # Make sure parent of root exists
 parent=$(dirname ${SPACK_ROOT})
 if [ ! -d "${parent}" ]; then
+    printf "Creating parent directory ${parent}\n"
     mkdir -p ${parent}
 fi
 
@@ -80,8 +81,10 @@ if [ "${INPUT_RELEASE}" != "" ]; then
 else
     printf "Cloning to ${SPACK_ROOT}\n"
     if [[ "${INPUT_FULL_CLONE}" == "false" ]]; then
+        printf "git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
         git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     else
+        printf "git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
         git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     fi
 fi
