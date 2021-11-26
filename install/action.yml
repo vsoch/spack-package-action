@@ -4,7 +4,7 @@ inputs:
   repos:
     description: comma separated list of additional repos to clone and add
     required: false
-  root:
+  spack_root:
     description: root to install spack to (defaults to /opt/spack)
     required: false
     default: /opt/spack
@@ -30,6 +30,6 @@ runs:
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
         INPUT_FULL_CLONE: ${{ inputs.full_clone }}
-        INPUT_ROOT: ${{ inputs.root }}
+        INPUT_SPACK_ROOT: ${{ inputs.root }}
       run: ${{ github.action_path }}/scripts/install.sh
       shell: bash
