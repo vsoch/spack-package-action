@@ -121,6 +121,7 @@ for spec_json in $(find ${build_cache} -name *.json); do
         spec_jsons=${spec_json}
     else
         spec_jsons="${spec_jsons},${spec_json}"
+    fi
 done
 
 # Set output for spec, and TODO binary to upload/save for next step
