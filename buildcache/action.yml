@@ -1,13 +1,6 @@
 name: 'Spack Build Cache Action'
 description: "Upload a newly generated .json file (corresponding to a package binary) to GitHub Pages spack build cache"
 inputs:
-  repo:
-    description: The repository to upload to (defaults to same as running action)
-    required: false
-  root:
-    description: Root to clone to.
-    required: false
-    default: /tmp/root
   subfolder:
     description: The subfolder to generate the buildcache site (defaults to docs/)
     required: false
@@ -37,9 +30,6 @@ runs:
     - name: Generate Spec Metadata
       id: generator
       env:
-        INPUT_REPO: ${{ inputs.repo }}
-        INPUT_ROOT: ${{ inputs.root }}
-        GITHUB_REPOSITORY: ${{ github.repository }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_CACHE_PREFIX: ${{ inputs.cache_prefix }}
@@ -51,7 +41,6 @@ runs:
 
     - name: Deploy
       env:
-        INPUT_ROOT: ${{ inputs.root }}
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         GITHUB_REPOSITORY: ${{ github.repository }}
         GITHUB_TOKEN: ${{ inputs.token }}

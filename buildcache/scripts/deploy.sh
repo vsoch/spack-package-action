@@ -19,7 +19,7 @@ git config pull.rebase true
 # We should already be in cloned repository and branch!
 ls .
 
-git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+#git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 git add ${INPUT_SUBFOLDER}
 git add ${INPUT_SUBFOLDER}/_cache
 git status

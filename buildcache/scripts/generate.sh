@@ -31,44 +31,18 @@ if [ -z "${build_cache_prefix}" ]; then
     exit 1
 fi
 
-printf "repo: ${INPUT_REPO}\n"
-printf "clone root: ${INPUT_ROOT}\n"
 printf "subfolder: ${INPUT_SUBFOLDER}\n"
 printf "branch: ${GITHUB_BRANCH}\n"
-printf "default repo: ${GITHUB_REPOSITORY}\n"
 printf "spec_jsons: ${spec_jsons}\n"
 printf "package: ${package_names}\n"
 printf "tagged: ${package_tagged_names}\n"
 printf "content type: ${package_content_type}\n"
 
-# If the github repo is set, use GITHUB_REPOSITORY
-if [ -z "${INPUT_REPO}" ]; then
-    INPUT_REPO="${GITHUB_REPOSITORY}"
-fi
-
-printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
-
-function clone_repo() {
-  INPUT_REPO=$1
-  INPUT_ROOT=$2
-  INPUT_BRANCH=$3
-  git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
-  cd ${INPUT_ROOT}
-  git checkout -b ${INPUT_BRANCH} || git checkout ${INPUT_BRANCH}
-}
-
-# Clone a branch is asked for, otherwise default to main
-if [ -z "${INPUT_BRANCH}" ]; then
-    git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
-else
-    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} || clone_repo ${INPUT_REPO} ${INPUT_ROOT} ${INPUT_BRANCH}
-fi  
-
-# Clone GitHub pages branch with site
-cd ${INPUT_ROOT}
+printf "git checkout -b ${INPUT_BRANCH} || git checkout ${INPUT_BRANCH}\n"
 
 # Repository name
-repository_name=$(basename ${INPUT_REPO})
+repository_name=$(basename ${PWD})
+printf "Repository name is ${repository_name}\n"
 
 # If no input subfolder exists, create with new site content
 if [ ! -d "${INPUT_SUBFOLDER}" ]; then
@@ -88,7 +62,7 @@ fi
 
 # Date updated
 updated_at=$(date '+%Y-%m-%d')
-s
+
 # Reach each of package_names, package_tagged_names, and spec_jsons into arrays
 IFS=',' read -r -a package_names <<< "$package_names"
 IFS=',' read -r -a package_tagged_names <<< "$package_tagged_names"
