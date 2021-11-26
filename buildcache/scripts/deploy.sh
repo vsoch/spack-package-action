@@ -30,7 +30,7 @@ if [ $? -eq 0 ]; then
     set -e
     printf "Changes\n"
     git commit -m "Automated push to update build cache $(date '+%Y-%m-%d')" || exit 0
-    git pull origin ${INPUT_BRANCH}
+    git pull origin ${INPUT_BRANCH} || printf "Does not exist yet.\n"
     git push origin ${INPUT_BRANCH} || exit 0
 else
     set -e
