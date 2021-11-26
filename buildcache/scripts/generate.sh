@@ -58,7 +58,7 @@ printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
 if [ -z "${INPUT_BRANCH}" ]; then
     git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
 else
-    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
+    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} || git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} && cd ${INPUT_ROOT} && git checkout -b ${INPUT_BRANCH} 
 fi
 
 # Clone GitHub pages branch with site
