@@ -125,9 +125,9 @@ for spec_json in $(find ${build_cache} -name *.json); do
 done
 
 # Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::\"${SPACK_SPEC}\""
+echo "::set-output name=spec::${SPACK_SPEC}"
 echo "::set-output name=spec_jsons::${spec_jsons}"
-echo "spec=\"${SPACK_SPEC}\"" >> $GITHUB_ENV
-echo "spec_jsons=\"${spec_jsons}\"" >> $GITHUB_ENV
+echo "spec=${SPACK_SPEC}" >> $GITHUB_ENV
+echo "spec_jsons=${spec_jsons}" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV
 echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
