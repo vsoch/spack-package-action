@@ -8,14 +8,15 @@ if [ "${INPUT_DEPLOY}" != "true" ]; then
     exit 0
 fi
 
+# Go to where repository was cloned
+cd /tmp/repo
+
 printf "GitHub Actor: ${GITHUB_ACTOR}\n"
 git config --global user.name "github-actions"
 git config --global user.email "github-actions@users.noreply.github.com"
 
 # We should already be in cloned repository and branch!
 ls .
-
-
 
 git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 git add ${INPUT_SUBFOLDER}
