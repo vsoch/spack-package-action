@@ -4,7 +4,7 @@ set -e
 
 # Show the user all relevant variables for debugging!
 printf "release: ${INPUT_RELEASE}\n"
-printf "branch: ${INPUT_BRANCH}\n"
+printf "branch: ${INPUT_SPACK_BRANCH}\n"
 printf "repos: ${INPUT_REPOS}\n"
 printf "root: ${INPUT_SPACK_ROOT}\n"
 
@@ -79,19 +79,19 @@ if [ "${INPUT_RELEASE}" != "" ]; then
 
 
 # If branch unset, default to develop
-if [ -z "${INPUT_BRANCH}" ]; then
-    INPUT_BRANCH="develop"
+if [ -z "${INPUT_SPACK_BRANCH}" ] || [[ "${INPUT_SPACK_BRANCH}" == "" ]]; then
+    INPUT_SPACK_BRANCH="develop"
 fi
 
 # Branch install, either shallow or full clone
 else
     printf "Cloning to ${SPACK_ROOT}\n"
     if [[ "${INPUT_FULL_CLONE}" == "false" ]]; then
-        printf "git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
-        git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
+        printf "git clone --depth 1 -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
+        git clone --depth 1 -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     else
-        printf "git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
-        git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
+        printf "git clone -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
+        git clone -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     fi
 fi
 

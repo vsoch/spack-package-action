@@ -49,7 +49,7 @@ runs:
 
     - name: Install Spack and Dependencies
       env:
-        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_SPACK_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
         INPUT_ROOT: /opt/spack
