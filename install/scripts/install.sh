@@ -12,7 +12,7 @@ printf "root: ${INPUT_SPACK_ROOT}\n"
 printf "Installing spack dependencies...\n"
 
 sudo apt update -q -y \
-  && sudo apt-get install -y git && \
+  && sudo apt-get install -y git \
   && sudo apt install -y -v \
       autoconf \
       automake \
