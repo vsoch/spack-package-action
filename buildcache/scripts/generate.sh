@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # These envars are required!
 if [ -z "${spec_json}" ]; then
     printf "Envar spec_json is required.\n"
@@ -53,13 +51,21 @@ fi
 
 printf "Input repository to clone is https://github.com/${INPUT_REPO}.git"
 
+function clone_repo() {
+  INPUT_REPO=$1
+  INPUT_ROOT=$2
+  INPUT_BRANCH=$3
+  git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
+  cd ${INPUT_ROOT}
+  git checkout -b ${INPUT_BRANCH} || git checkout ${INPUT_BRANCH}
+}
 
 # Clone a branch is asked for, otherwise default to main
 if [ -z "${INPUT_BRANCH}" ]; then
     git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT}
 else
-    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} || git clone https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} && cd ${INPUT_ROOT} && git checkout -b ${INPUT_BRANCH} 
-fi
+    git clone -b ${INPUT_BRANCH} https://github.com/${INPUT_REPO}.git ${INPUT_ROOT} || clone_repo ${INPUT_REPO} ${INPUT_ROOT} ${INPUT_BRANCH}
+fi  
 
 # Clone GitHub pages branch with site
 cd ${INPUT_ROOT}
