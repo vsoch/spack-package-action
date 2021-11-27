@@ -5,9 +5,6 @@ inputs:
     description: The subfolder to generate the buildcache site (defaults to docs/)
     required: false
     default: docs/
-  cache_prefix:
-    description: Prefix of build cache (above build_cache folder)
-    required: true
   branch:
     description: Branch to deploy to (defaults to main) of the same repository
     required: false
@@ -35,7 +32,6 @@ runs:
       env:
         INPUT_SUBFOLDER: ${{ inputs.subfolder }}
         INPUT_BRANCH: ${{ inputs.branch }}
-        INPUT_CACHE_PREFIX: ${{ inputs.cache_prefix }}
         GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_REPOSITORY: ${{ github.repository }}
         ACTION_PATH: ${{ github.action_path }}

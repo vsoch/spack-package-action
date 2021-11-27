@@ -184,13 +184,69 @@ previously for variables set in the environment, and there are inputs that you c
 Your workflow might look like this:
 
 ```yaml
+jobs:
+  build-binaries:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    name: Build Package Binary
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Build Spack Package
+        uses: vsoch/spack-package-action/package@add/buildcache-action
+        id: package
+        with:
+          package: zlib
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
+
+      - name: Update Build Cache
+        uses: vsoch/spack-package-action/buildcache@add/buildcache-action
+        with:
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          user: ${{ secrets.DEPLOY_USER }}
+          deploy: ${{ github.event_name != 'pull_request' }
 ```
 
-**Important** You MUST set the GitHub token to be present for the checkout step or you will get permission denied.
+**Important** You MUST set the GitHub token and username to be present for the buildcache steps or it won't work.
+These are personal access tokens with repository permissions to allow pushing back to main. For this same reason,
+be careful about running the workflow on a push event - you would want to do a check for the pusher and ensure if it's
+your bot account that the workflow doesn't run again.
+
+You can also get creative with the above! E.g., you might build from a matrix of packages, or even a spack.yaml.
+See the example [autamus/spack-build-cache](https://github.com/autamus/spack-build-cache) for more detail and examples.
 
 ### Variables
 
+| name | description | default | example | required |
+|------|-------------|---------|---------|----------|
+| subfolder | The subfolder to generate the buildcache site | docs | doc | false |
+| branch | Branch to deploy to (defaults to main) of the same repository | main | gh-pages | false |
+| token | A GitHub personal access token (repo scope) to push to the repository | unset | ... | true |
+| user | Username for token | unset | my-github-bot | true |
+| deploy | Deploy to GitHub pages | false | true | true |
 
+
+### Environment Variables
+
+The following environment variables are required (and are set by the package action)
+
+| name | description |
+|------|-------------|
+| spec_jsons | comma separated list of spec*.json files in build cache |
+| package_names | the full names of the ghcr packages uploaded, matched in order to spec_jsons and also comma separated |
+| package_tagged_names | the same, but with custom tag (typically git commit) |
+| package_tag | a special package tag used, if defined |
+| package_content_type | a single package content type (usually `application/vnd.spack.package`) |
+| build_cache_prefix | the full build cache prefix used during package build and build cache create |
+
+The package and buildcache actions are tightly wound and expected to be used together, but arguably if you
+maintain the correct inputs/outputs you can use the buildcache with a different generator step.
 
 ## Common
 
