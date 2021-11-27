@@ -85,7 +85,7 @@ elif [ -d "${PACKAGE_PATH}" ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
 else    
     printf "package_custom_path: ${INPUT_PACKAGE_PATH}\n"
     printf "package_path: ${PACKAGE_PATH}\n"
-    printf "You must either provide a package name (package) OR a custom package path (package_path)\n"
+    printf "You must either provide a package name (package) OR a custom package path (package_path) that exists\n"
     exit 1
 fi
 
@@ -94,8 +94,6 @@ fi
 month=$(date '+%y.%m')
 build_cache=/opt/${month}
 mkdir -p $build_cache
-
-# Add the key
 
 # Add the key, stored with buildcache action (we need to do both these things?)
 root=$(dirname ${ACTION_ROOT})
@@ -117,7 +115,7 @@ echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 for spec_json in $(find ${build_cache} -name *.json); do
     printf "${spec_json}\n"
     cat ${spec_json}
-    if [[ "${specs}" == "" ]]; then
+    if [[ "${spec_jsons}" == "" ]]; then
         spec_jsons=${spec_json}
     else
         spec_jsons="${spec_jsons},${spec_json}"
