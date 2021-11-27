@@ -1,6 +1,5 @@
 title: Spack Build Cache
 description: A GitHub-based build cache for spack, with a nice UI to boot.
-url: ""
 
 # Change if you deploy to a root, or another docs subfolder
 subfolder: "docs"

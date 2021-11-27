@@ -32,7 +32,7 @@ if [ -z "${build_cache_prefix}" ]; then
 fi
 
 printf "subfolder: ${INPUT_SUBFOLDER}\n"
-printf "branch: ${GITHUB_BRANCH}\n"
+printf "branch: ${INPUT_BRANCH}\n"
 printf "spec_jsons: ${spec_jsons}\n"
 printf "package: ${package_names}\n"
 printf "tagged: ${package_tagged_names}\n"
@@ -53,6 +53,7 @@ if [ ! -d "${INPUT_SUBFOLDER}" ]; then
    # Ensure repository and baseurl at top of _config
    sed -i "1irepository: ${INPUT_REPO}" ${INPUT_SUBFOLDER}/_config.yml
    sed -i "1ibaseurl: /${repository_name}" ${INPUT_SUBFOLDER}/_config.yml
+   sed -i "1ibranch: ${INPUT_BRANCH}" ${INPUT_SUBFOLDER}/_config.yml
    cat ${INPUT_SUBFOLDER}/_config.yml
 
    # Copy the key into the root of the cache
