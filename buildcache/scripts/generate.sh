@@ -81,6 +81,7 @@ for i in "${!package_names[@]}"; do
 
     # We will write the package template
     markdown_result=${INPUT_SUBFOLDER}_cache/${build_cache_prefix}/${plain_package_name}.md
+    mkdir -p $(dirname ${markdown_result})
     repository=$(basename ${GITHUB_REPOSITORY})
 
     spec_json_name=$(basename ${spec_json})

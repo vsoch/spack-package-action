@@ -29,7 +29,7 @@ js: ["post.js"]
           {% if catego %}
             <a class="cat-class cat-commas" href="{{site.baseurl}}/categories#{{cat | slugify}}">{{ catego.name }}</a>{% unless forloop.last %},{% else %}.{% endunless %}
           {% endif %}
-        {% endfor %}| <a style="float:right" href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}" target="_blank">🗒️ Edit on GitHub</a>
+        {% endfor %}| <a style="float:right" href="https://github.com/{{ site.github.owner_name }}/{{ site.github.repository_name }}/edit/main/{{ page.path }}" target="_blank">🗒️ Edit on GitHub</a>
       </span>
     </div>
 
