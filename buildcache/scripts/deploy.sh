@@ -20,7 +20,6 @@ git add ${INPUT_SUBFOLDER}
 git add ${INPUT_SUBFOLDER}*
 git add ${INPUT_SUBFOLDER}//*
 git add ${INPUT_SUBFOLDER}/_cache
-git add ${INPUT_SUBFOLDER}//_cache/*
 git status
 
 set +e
