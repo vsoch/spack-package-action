@@ -16,10 +16,10 @@ git config --global user.email "${INPUT_USER}@users.noreply.github.com"
 git config pull.rebase true
 
 git remote set-url origin "https://x-access-token:${INPUT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-git add ${INPUT_SUBFOLDER}
-git add ${INPUT_SUBFOLDER}*
-git add ${INPUT_SUBFOLDER}//*
-git add ${INPUT_SUBFOLDER}/_cache
+git add ${INPUT_SUBFOLDER} || printf "No matching files\n"
+git add ${INPUT_SUBFOLDER}* || printf "No matching files\n"
+git add ${INPUT_SUBFOLDER}//* || printf "No matching files\n"
+git add ${INPUT_SUBFOLDER}/_cache || printf "No matching files\n"
 git status
 
 set +e
