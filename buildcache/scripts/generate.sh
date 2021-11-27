@@ -96,7 +96,6 @@ content_type: "${package_content_type}"
 package: ${package_name}
 tagged: ${package_tagged_name}
 updated_at: ${updated_at}
-package_page: https://github.com/${GITHUB_REPOSITORY}/pkgs/container/${repository}/${package_name}
 maths: 1
 toc: 1
 ---

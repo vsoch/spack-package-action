@@ -30,7 +30,7 @@ js: ["post.js"]
           {% if catego %}
             <a class="cat-class cat-commas" href="{{site.baseurl}}/categories#{{cat | slugify}}">{{ catego.name }}</a>{% unless forloop.last %},{% else %}.{% endunless %}
           {% endif %}
-        {% endfor %} <a style="float:right" href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}" target="_blank">🗒️ Edit on GitHub</a>
+        {% endfor %} <a style="float:right" href="https://github.com/{{ site.repository }}/edit/main/{{ site.subfolder }}/{{ page.path }}" target="_blank">🗒️ Edit on GitHub</a>
       </span>
     </div>
 
@@ -38,7 +38,7 @@ js: ["post.js"]
     <div class="row thi-post">
       <div class="col s12">
         {{ content }}         
-        <a href="{{ page.package_page }}" target="_blank"><span class="badge badge-info" style="color:white">package-page</span></a><br> {% if page.content_type %}| <span class="badge badge-info" style="color:white">content-type: {{ page.content_type }}</span>{% endif %}<br>
+        <a href="https://{{ page.package }}" target="_blank"><span class="badge badge-info" style="color:white">package-page</span></a><br> {% if page.content_type %} <span class="badge badge-info" style="color:white">content-type: {{ page.content_type }}</span>{% endif %}<br>
 
         <h2>Tags</h2>
         <p>Also tagged {{ page.tagged }}</p>

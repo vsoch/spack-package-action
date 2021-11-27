@@ -37,6 +37,7 @@ runs:
         INPUT_BRANCH: ${{ inputs.branch }}
         INPUT_CACHE_PREFIX: ${{ inputs.cache_prefix }}
         GITHUB_TOKEN: ${{ inputs.token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
         ACTION_PATH: ${{ github.action_path }}
 
       run: ${{ github.action_path }}/scripts/generate.sh

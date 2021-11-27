@@ -21,9 +21,9 @@
           </thead>
               <tbody>
                 {% for entry in site.cache %}
-                  <tr data-name="{{ entry.title }}" data-github="{{ entry.package_page }}">
+                  <tr data-name="{{ entry.title }}" data-github="https://{{ entry.package }}">
                     <td>
-                        <a href="{{ entry.package_page }}" target="_blank">
+                        <a href="https://{{ entry.package }}" target="_blank">
                            <span class="btn btn-xs btn-danger">GITHUB</span></a>
                     </td>
                     <td><a href="{{ site.baseurl }}{{ entry.url }}">{{ entry.title }}</a></td>
