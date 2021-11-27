@@ -25,10 +25,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Build Spack Package
         uses: ./package
+        id: package
         with:
           package: zlib
           token: ${{ secrets.GITHUB_TOKEN }}
           deploy: ${{ github.event_name != 'pull_request' }}
+
+      - name: Test Updating Build Cache
+        uses: ./buildcache
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: false
           
   build-container-spack-yaml:
     runs-on: ubuntu-latest

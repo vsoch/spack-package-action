@@ -4,14 +4,15 @@ set -e
 
 # Show the user all relevant variables for debugging!
 printf "release: ${INPUT_RELEASE}\n"
-printf "branch: ${INPUT_BRANCH}\n"
+printf "branch: ${INPUT_SPACK_BRANCH}\n"
 printf "repos: ${INPUT_REPOS}\n"
-printf "root: ${INPUT_ROOT}\n"
+printf "root: ${INPUT_SPACK_ROOT}\n"
 
 # GitHub supports ubuntu, so the setup here assumes that
 printf "Installing spack dependencies...\n"
 
 sudo apt update -q -y \
+  && sudo apt-get install -y git \
   && sudo apt install -y -v \
       autoconf \
       automake \
@@ -25,7 +26,6 @@ sudo apt update -q -y \
       gcc \
       gettext \
       gfortran \ 
-      git \
       gpg \
       iputils-ping \
       jq \
@@ -59,14 +59,15 @@ python -m pip install --upgrade pip setuptools wheel
 python -m pip install gnureadline boto3 pyyaml pytz minio requests clingo
 rm -rf ~/.cache
 
-export SPACK_ROOT=${INPUT_ROOT}
+export SPACK_ROOT=${INPUT_SPACK_ROOT}
 export SPACK_ADD_DEBUG_FLAGS=true
 
 printf "Installing spack...\n"
 
 # Make sure parent of root exists
-parent=$(dirname ${INPUT_ROOT})
+parent=$(dirname ${SPACK_ROOT})
 if [ ! -d "${parent}" ]; then
+    printf "Creating parent directory ${parent}\n"
     mkdir -p ${parent}
 fi
 
@@ -74,20 +75,30 @@ fi
 if [ "${INPUT_RELEASE}" != "" ]; then
     wget https://github.com/spack/spack/releases/download/v${INPUT_RELEASE}/spack-${INPUT_RELEASE}.tar.gz
     tar -xzvf spack-${INPUT_RELEASE}.tar.gz
-    mv spack-${INPUT_RELEASE} ${INPUT_ROOT}
+    mv spack-${INPUT_RELEASE} ${SPACK_ROOT}
+
+
+# If branch unset, default to develop
+if [ -z "${INPUT_SPACK_BRANCH}" ] || [[ "${INPUT_SPACK_BRANCH}" == "" ]]; then
+    INPUT_SPACK_BRANCH="develop"
+fi
 
 # Branch install, either shallow or full clone
 else
+    printf "Cloning to ${SPACK_ROOT}\n"
     if [[ "${INPUT_FULL_CLONE}" == "false" ]]; then
-        git clone --depth 1 -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
+        printf "git clone --depth 1 -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
+        git clone --depth 1 -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     else
-        git clone -b ${INPUT_BRANCH} https://github.com/spack/spack ${INPUT_ROOT}
+        printf "git clone -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}\n"
+        git clone -b ${INPUT_SPACK_BRANCH} https://github.com/spack/spack ${SPACK_ROOT}
     fi
 fi
 
 # Find compilers
 # The user running the action should install additional compilers before
-cd ${INPUT_ROOT}
+cd ${SPACK_ROOT}
+ls
 . share/spack/setup-env.sh
 spack compiler find
 
@@ -101,5 +112,5 @@ if [ ! -z "${INPUT_REPOS}" ]; then
         git clone $repo $clone_dir        
         spack repo add $clone_dir
     done
-    cd ${INPUT_ROOT}
+    cd ${SPACK_ROOT}
 fi

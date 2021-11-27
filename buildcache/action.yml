@@ -1,0 +1,51 @@
+name: 'Spack Build Cache Action'
+description: "Upload a newly generated .json file (corresponding to a package binary) to GitHub Pages spack build cache"
+inputs:
+  subfolder:
+    description: The subfolder to generate the buildcache site (defaults to docs/)
+    required: false
+    default: docs/
+  branch:
+    description: Branch to deploy to (defaults to main) of the same repository
+    required: false
+    default: main
+  token:
+    description: A GitHub personal access token (repo scope) to push to the repository
+    required: true
+  user:
+    description: Username for token
+    required: true
+  deploy:
+    description: Deploy to GitHub pages
+    required: true
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Python Dependencies
+      run: pip install requests jinja2
+      shell: bash
+
+    - name: Generate Spec Metadata
+      id: generator
+      env:
+        INPUT_SUBFOLDER: ${{ inputs.subfolder }}
+        INPUT_BRANCH: ${{ inputs.branch }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        ACTION_PATH: ${{ github.action_path }}
+
+      run: ${{ github.action_path }}/scripts/generate.sh
+      shell: bash
+
+    - name: Deploy
+      env:
+        INPUT_SUBFOLDER: ${{ inputs.subfolder }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_DEPLOY: ${{ inputs.deploy }}
+        INPUT_USER: ${{ inputs.user }}
+        INPUT_BRANCH: ${{ inputs.branch }}
+      run: ${{ github.action_path }}/scripts/deploy.sh
+      shell: bash

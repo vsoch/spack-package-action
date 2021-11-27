@@ -19,11 +19,6 @@ if [ -z "${INPUT_SPACK_YAML}" ] && [ -z "${INPUT_PACKAGE_NAME}" ]  ; then
     exit 1
 fi
 
-if [ -z "${INPUT_SPACK_YAML}" ] && [ -z "${INPUT_PACKAGE_NAME}" ]  ; then
-    printf "You must define a spack yaml (spack_yaml) or package name (package)\n"
-    exit 1
-fi
-
 # If we don't have a spack yaml, generate from package
 if [ -z "${INPUT_SPACK_YAML}" ]; then
 
@@ -47,10 +42,12 @@ spack:
         - python3-boto3
         - python3-dev
 EOL
-INPUT_SPACK_YAML=spack.yaml
+
+export INPUT_SPACK_YAML=spack.yaml
+
 fi
 
-printf "Preparing to containerize:\n"
+printf "Preparing to containerize ${INPUT_SPACK_YAML}:\n"
 
 # Show the finished spack.yaml
 cat $INPUT_SPACK_YAML

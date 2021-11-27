@@ -30,11 +30,14 @@ inputs:
 outputs:
   container:
     description: "Container unique resource identifier (sans tag)"
+    value: ${{ steps.release.outputs.container }}
   tag:
     description: "Container custom tag"
+    value: ${{ steps.release.outputs.tag }}
   commit:
     description: "Container commit (also a tag)"
-    
+    value: ${{ steps.release.outputs.commit }}
+
 runs:
   using: "composite"
   steps:
@@ -46,10 +49,10 @@ runs:
 
     - name: Install Spack and Dependencies
       env:
-        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_SPACK_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
-        INPUT_ROOT: /opt/spack
+        INPUT_SPACK_ROOT: /opt/spack
       run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
@@ -66,6 +69,7 @@ runs:
 
     - name: Package Release
       if: ${{ inputs.deploy == 'true' }}
+      id: release
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}

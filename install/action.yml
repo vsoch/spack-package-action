@@ -4,13 +4,13 @@ inputs:
   repos:
     description: comma separated list of additional repos to clone and add
     required: false
-  root:
+  spack_root:
     description: root to install spack to (defaults to /opt/spack)
-    required: false
+    required: true
     default: /opt/spack
   branch:
     description: The branch of spack to use (defaults to develop)
-    required: false
+    required: true
     default: develop
   release:
     description: A spack release to use (if defined, overrides branch)
@@ -26,10 +26,10 @@ runs:
   steps:
     - name: Install Spack and Dependencies
       env:
-        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_SPACK_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
         INPUT_FULL_CLONE: ${{ inputs.full_clone }}
-        INPUT_ROOT: ${{ inputs.root }}
+        INPUT_SPACK_ROOT: ${{ inputs.spack_root }}
       run: ${{ github.action_path }}/scripts/install.sh
       shell: bash

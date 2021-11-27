@@ -82,8 +82,10 @@ elif [ -d "${PACKAGE_PATH}" ] && [ ! -z "${INPUT_PACKAGE_PATH}" ]; then
     printf "Package name provided that does NOT exist and a custom package.py, will install custom package.\n"
     install_custom_package "${SPACK_SPEC}" "${PACKAGE_PATH}" "${INPUT_PACKAGE_PATH}"
 
-else
-    printf "You must either provide a package name (package) OR a custom package path (package_path)\n"
+else    
+    printf "package_custom_path: ${INPUT_PACKAGE_PATH}\n"
+    printf "package_path: ${PACKAGE_PATH}\n"
+    printf "You must either provide a package name (package) OR a custom package path (package_path) that exists\n"
     exit 1
 fi
 
@@ -93,27 +95,37 @@ month=$(date '+%y.%m')
 build_cache=/opt/${month}
 mkdir -p $build_cache
 
-# TODO we will want to have this be a consistent key (not generate newly every time)
+# Add the key, stored with buildcache action (we need to do both these things?)
+root=$(dirname ${ACTION_ROOT})
+spack gpg trust ${root}/buildcache/4A424030614ADE118389C2FD27BDB3E5F0331921.pub
 spack gpg init
 spack gpg create "${GITHUB_ACTOR}" "${GITHUB_ACTOR}@users.noreply.github.com"
-spack buildcache create -d ${build_cache} ${SPACK_SPEC}
+spack buildcache create -r -a -d ${build_cache} ${SPACK_SPEC}
 
 # Did we make stuff?
 tree ${build_cache}
 
-# Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::${SPACK_SPEC}"
-echo "::set-output name=spec_json::${spec_json}"
+# We want to save the .json files for any following step :)
+spec_jsons=""
+
 echo "::set-output name=build_cache::${build_cache}"
 echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
 
-# We want to save the .json for any following step :)
-spec_json=$(find ${build_cache} -name *.json)
+# There can be more than one thing in the build cache
+for spec_json in $(find ${build_cache} -name *.json); do
+    printf "${spec_json}\n"
+    cat ${spec_json}
+    if [[ "${spec_jsons}" == "" ]]; then
+        spec_jsons=${spec_json}
+    else
+        spec_jsons="${spec_jsons},${spec_json}"
+    fi
+done
 
-# Show the spec
-cat ${spec_json}
-
-echo "spec=${spec}" >> $GITHUB_ENV
-echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV
+# Set output for spec, and TODO binary to upload/save for next step
+echo "::set-output name=spec::${SPACK_SPEC}"
+echo "::set-output name=spec_jsons::${spec_jsons}"
+echo "spec=${SPACK_SPEC}" >> $GITHUB_ENV
+echo "spec_jsons=${spec_jsons}" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV
-echo "spec_json=${spec_json}" >> $GITHUB_ENV
+echo "build_cache_prefix=${month}/build_cache" >> $GITHUB_ENV

@@ -11,7 +11,7 @@ inputs:
     description: comma separated list of additional repos to clone and add
     required: false
   branch:
-    description: The branch of spack to use (defaults to develop)
+    description: Spack branch to clone
     required: false
     default: develop
   release:
@@ -33,15 +33,31 @@ inputs:
     default: false
 
 outputs:
-  spec_json:
-    description: "json file in the cache to describe the entry."
+  package_name:
+    description: "package name uploaded to"
+    value: ${{ steps.release.outputs.package_name }}
+  package_tagged_name:
+    description: "package name with custom tag uploaded to"
+    value: ${{ steps.release.outputs.package_name }}
+  package_tag:
+    description: "package tag (along with latest)"
+    value: ${{ steps.release.outputs.package_tag }}
+  package_content_type:
+    description: "the package content type"
+    value: ${{ steps.release.outputs.content_type }}
+  spec_jsons:
+    description: "comma separately list of json files in the cache to describe the entry."
+    value: ${{ steps.build.outputs.spec_jsons }}
   build_cache:
     description: "Build cache path (dated YY.MM)"
+    value: ${{ steps.build.outputs.build_cache }}
   build_cache_prefix:
     description: Prefix of spack build cache (directory above build_cache)
+    value: ${{ steps.build.outputs.build_cache_prefix }}
   spec:
     description: "Spec used for build"
-    
+    value: ${{ steps.build.outputs.spec }}
+
 runs:
   using: "composite"
   steps:
@@ -53,10 +69,10 @@ runs:
 
     - name: Install Spack and Dependencies
       env:
-        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_SPACK_BRANCH: ${{ inputs.branch }}
         INPUT_RELEASE: ${{ inputs.release }}
         INPUT_REPOS: ${{ inputs.repos }}
-        INPUT_ROOT: /opt/spack
+        INPUT_SPACK_ROOT: /opt/spack
       run: ${{ env.ACTION_ROOT }}/install/scripts/install.sh
       shell: bash
 
@@ -66,11 +82,12 @@ runs:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         INPUT_PACKAGE_PATH: ${{ inputs.package_path }}
         INPUT_FLAGS: ${{ inputs.flags }}
+        ACTION_ROOT: ${{ github.action_path }}
       run: ${{ github.action_path }}/scripts/build.sh
       shell: bash
 
     - name: Package Release
-      if: ${{ inputs.deploy == 'true' }}
+      id: release
       env:
         INPUT_PACKAGE_NAME: ${{ inputs.package }}
         GITHUB_TOKEN: ${{ inputs.token }}
@@ -79,5 +96,6 @@ runs:
         BUILD_CACHE_PREFIX: ${{ env.build_cache_prefix }}
         BUILD_CACHE: ${{ env.build_cache }}
         SPACK_ROOT: /opt/spack
+        DEPLOY: ${{ inputs.deploy }}
       run: ${{ github.action_path }}/scripts/release.sh
       shell: bash
