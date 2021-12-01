@@ -36,7 +36,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           deploy: false
-          
+
+  build-env-binaries:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    name: Build Environment Binaries
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Environment
+        uses: ./envpackage
+        with:
+          spack_yaml: spack/spack.yaml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
+       
   build-container-spack-yaml:
     runs-on: ubuntu-latest
     permissions:
