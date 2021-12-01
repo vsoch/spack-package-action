@@ -93,34 +93,6 @@ This action is provided in [package](package), and an example package is shown
 [here](https://github.com/vsoch/spack-package-action/pkgs/container/spack-package-action%2Fzlib).
 
 
-## Environment Binary Build
-
-The environment builder is similar to the package builder, but instead of a package name
-you provide a path to a spack.yaml, and the entire environment is built and added to the build
-cache. This can be useful for a package to provide it's own buildcache. Here is an example:
-
-
-```yaml
-jobs:
-  build-env-binaries:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    name: Build Environment Binaries
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build Environment
-        uses: vsoch/spack-package-action/envpackage@main
-        with:
-          spack_yaml: spack/spack.yaml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          deploy: ${{ github.event_name != 'pull_request' }}
-```
-
-This action is provided in [envpackage](envpackage).
-
-
 ### Oras Pull
 
 To then get the binary, you can [install oras](https://oras.land/cli/) and do:
@@ -160,6 +132,47 @@ The interesting thing about building on actions is that you get a different buil
 spack build hashes (that identify the package) are going to vary. This could be a good thing to provide lots
 of different supported packages, or bad if you want consistently the same one. Likely you can pin this by setting a target
 in the `flags` for the package.
+
+## Environment Binary Build
+
+The environment builder is similar to the package builder, but instead of a package name
+you provide a path to a spack.yaml, and the entire environment is built and added to the build
+cache. This can be useful for a package to provide it's own buildcache. Here is an example:
+
+
+```yaml
+jobs:
+  build-env-binaries:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    name: Build Environment Binaries
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Environment
+        uses: vsoch/spack-package-action/envpackage@main
+        with:
+          spack_yaml: spack/spack.yaml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
+```
+
+This action is provided in [envpackage](envpackage).
+
+### Variables
+
+| name | description | default | example | required |
+|------|-------------|---------|---------|----------|
+| spack_yaml | path to spack.yaml to generate environment | unset | spack/spack.yaml | true |
+| repos | comma separated list of additional repos to clone and add | unset | https://github.com/rbogle/spack-repo | false
+| branch | The branch of spack to use | develop | feature-branch | false | 
+| release | A spack release to use (if defined, overrides branch) | unset | 0.17.0 | false |
+| token | A GitHub token required if releasing artifacts to the same repository | unset | `${{ secrets.GITHUB_TOKEN }}` | false |
+| flags | Extra flags (compiler, target, variants, etc) to add to the install command | unset | +debug | false |
+| tag | Tag to use for package | latest | v10.0.0 | false |
+| deploy | Deploy (release) package to GitHub repository (token is required) | false | true | true |
+
 
 ## Package Container Build
 
