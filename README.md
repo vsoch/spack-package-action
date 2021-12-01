@@ -85,13 +85,41 @@ jobs:
         uses: vsoch/spack-package-action/package@main
         with:
           package: zlib
-          deploy: true
           token: ${{ secrets.GITHUB_TOKEN }}
           deploy: ${{ github.event_name != 'pull_request' }}
 ```
 
 This action is provided in [package](package), and an example package is shown 
 [here](https://github.com/vsoch/spack-package-action/pkgs/container/spack-package-action%2Fzlib).
+
+
+## Environment Binary Build
+
+The environment builder is similar to the package builder, but instead of a package name
+you provide a path to a spack.yaml, and the entire environment is built and added to the build
+cache. This can be useful for a package to provide it's own buildcache. Here is an example:
+
+
+```yaml
+jobs:
+  build-env-binaries:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    name: Build Environment Binaries
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Environment
+        uses: vsoch/spack-package-action/envpackage@main
+        with:
+          spack_yaml: spack/spack.yaml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deploy: ${{ github.event_name != 'pull_request' }}
+```
+
+This action is provided in [envpackage](envpackage).
+
 
 ### Oras Pull
 
