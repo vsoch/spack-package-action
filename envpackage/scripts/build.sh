@@ -55,8 +55,8 @@ tree ${build_cache}
 # We want to save the .json files for any following step :)
 spec_jsons=""
 
-echo "::set-output name=build_cache::${build_cache}"
-echo "::set-output name=build_cache_prefix::${build_cache_prefix}"
+echo "build_cache=${build_cache}" >> "${GITHUB_OUTPUT}"
+echo "build_cache_prefix=${build_cache_prefix}" >> "${GITHUB_OUTPUT}"
 
 # There can be more than one thing in the build cache
 for spec_json in $(find ${build_cache} -name *.json); do
@@ -70,8 +70,8 @@ for spec_json in $(find ${build_cache} -name *.json); do
 done
 
 # Set output for spec, and TODO binary to upload/save for next step
-echo "::set-output name=spec::${SPACK_SPEC}"
-echo "::set-output name=spec_jsons::${spec_jsons}"
+echo "spec=${SPACK_SPEC}" >> "${GITHUB_OUTPUT}"
+echo "spec_jsons=${spec_jsons}" >> "${GITHUB_OUTPUT}"
 echo "spec=${SPACK_SPEC}" >> $GITHUB_ENV
 echo "spec_jsons=${spec_jsons}" >> $GITHUB_ENV
 echo "build_cache=${build_cache}" >> $GITHUB_ENV

@@ -34,11 +34,11 @@ fi
 
 # Package content type is always consistent
 package_content_type=application/vnd.spack.package
-echo "::set-output name=package_content_type::${package_content_type}"
+echo "package_content_type=${package_content_type}" >> "${GITHUB_OUTPUT}"
 echo "package_content_type=${package_content_type}" >> $GITHUB_ENV
 
 # As is common input tag
-echo "::set-output name=package_tag::${INPUT_TAG}"
+echo "package_tag=${INPUT_TAG}" >> "${GITHUB_OUTPUT}"
 echo "package_tag=${INPUT_TAG}" >> $GITHUB_ENV
 
 # Keep lists of package names, tagged, names
@@ -78,7 +78,7 @@ for spack_package in $(find ${BUILD_CACHE} -name *.spack); do
     fi
 done
 
-echo "::set-output name=package_name::${package_names}"
-echo "::set-output name=package_tagged_names::${tagged_names}"
+echo "package_name=${package_names}" >> "${GITHUB_OUTPUT}"
+echo "package_tagged_names=${tagged_names}" >> "${GITHUB_OUTPUT}"
 echo "package_names=${package_names}" >> $GITHUB_ENV
 echo "package_tagged_names=${tagged_names}" >> $GITHUB_ENV

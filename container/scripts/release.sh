@@ -20,6 +20,6 @@ fi
 # Push for all container tags
 docker push --all-tags ghcr.io/${PACKAGE_NAME}
 
-echo "::set-output name=container::${PACKAGE_NAME}"
-echo "::set-output name=tag::${INPUT_TAG}"
-echo "::set-output name=commit::${GITHUB_SHA}"
+echo "container=${PACKAGE_NAME}" >> "${GITHUB_OUTPUT}"
+echo "tag=${INPUT_TAG}" >> "${GITHUB_OUTPUT}"
+echo "commit=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
